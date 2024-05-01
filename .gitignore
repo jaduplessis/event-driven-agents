@@ -1,0 +1,24 @@
+**/__pycache__/
+.python-version
+**/.DS_Store
+.DS_Store
+**/*.token
+
+# Node.js
+node_modules
+**/node_modules
+
+# Cdk
+cdk.out
+cdk.out/** */
+cdk.context.json
+services/traduire-gpt/.DS_Store
+services/traduire-gpt/cdk.out/dev-traduire-gpt.assets.json
+services/traduire-gpt/cdk.out/dev-traduire-gpt.template.json
+services/traduire-gpt/cdk.out/manifest.json
+services/traduire-gpt/cdk.out/tree.json
+
+
+# .env.* except .env.example
+.env*
+!.env.example
