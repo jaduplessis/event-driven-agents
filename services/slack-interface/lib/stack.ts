@@ -2,15 +2,19 @@ import { Stack } from "aws-cdk-lib";
 import { Construct } from "constructs";
 
 import {
-    ApiGateway,
-    DynamoDBConstruct,
-    EventBridge,
+  ApiGateway,
+  DynamoDBConstruct,
+  EventBridge,
 } from "@event-driven-agents/cdk-constructs";
-import { buildResourceName, getStage } from "@event-driven-agents/helpers";
 import {
-    SlackAuthCallback,
-    SlackInstall,
-    SlackIntegration,
+  buildResourceName,
+  eventBusName,
+  getStage,
+} from "@event-driven-agents/helpers";
+import {
+  SlackAuthCallback,
+  SlackInstall,
+  SlackIntegration,
 } from "./resources/functions";
 
 export class SlackInterfaceStack extends Stack {
@@ -24,7 +28,7 @@ export class SlackInterfaceStack extends Stack {
     });
 
     const eventBridge = new EventBridge(this, "event-bridge", {
-      eventBusName: buildResourceName("snack-global-event-bus"),
+      eventBusName,
     });
 
     const workspaceTable = new DynamoDBConstruct(this, "workspace-table", {

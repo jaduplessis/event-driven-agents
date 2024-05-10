@@ -3,13 +3,16 @@ import {
   PutParameterCommandInput,
   SSMClient,
 } from "@aws-sdk/client-ssm";
-import { EventBridgeAdapter, SlackAppAdapter } from "@slackbot/adapters";
+import {
+  EventBridgeAdapter,
+  SlackAppAdapter,
+} from "@event-driven-agents/adapters";
 import {
   buildResourceName,
   getRegion,
   getStateValues,
   SubmitApiKeyEvent,
-} from "@slackbot/helpers";
+} from "@event-driven-agents/helpers";
 import { EventBridgeEvent } from "aws-lambda";
 
 const ssm = new SSMClient({ region: getRegion() });

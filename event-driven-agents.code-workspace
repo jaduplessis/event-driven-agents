@@ -71,10 +71,10 @@
       "path": "services/slack-interface",
       "name": "slack-interface [service]"
     },
-    // {
-    //   "path": "services/brain",
-    //   "name": "brain [service]"
-    // },
+    {
+      "path": "services/agent",
+      "name": "agent [service]"
+    },
     // {
     //   "path": "services/tools",
     //   "name": "tools [service]"

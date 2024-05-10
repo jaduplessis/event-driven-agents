@@ -3,8 +3,15 @@ import {
   DeleteParameterCommandInput,
   SSMClient,
 } from "@aws-sdk/client-ssm";
-import { EventBridgeAdapter, SlackAppAdapter } from "@slackbot/adapters";
-import { BaseEvent, buildResourceName, getRegion } from "@slackbot/helpers";
+import {
+  EventBridgeAdapter,
+  SlackAppAdapter,
+} from "@event-driven-agents/adapters";
+import {
+  BaseEvent,
+  buildResourceName,
+  getRegion,
+} from "@event-driven-agents/helpers";
 import { EventBridgeEvent } from "aws-lambda";
 
 const ssm = new SSMClient({ region: getRegion() });
