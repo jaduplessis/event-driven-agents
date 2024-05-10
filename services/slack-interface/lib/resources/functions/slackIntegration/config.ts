@@ -1,16 +1,20 @@
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 
-import { LambdaResource } from "@event-driven-agents/cdk-constructs";
+import { SlackCustomResource } from "@event-driven-agents/cdk-constructs";
 import {
-  buildResourceName,
-  getCdkHandlerPath,
-  getEnvVariable,
+    buildResourceName,
+    getCdkHandlerPath,
+    getEnvVariable,
 } from "@event-driven-agents/helpers";
+import { LambdaIntegration, Resource } from "aws-cdk-lib/aws-apigateway";
+import { Table } from "aws-cdk-lib/aws-dynamodb";
 import { EventBus } from "aws-cdk-lib/aws-events";
 import { Construct } from "constructs";
 
 interface slackIntegrationProps {
   eventBus: EventBus;
+  workspaceTable: Table;
+  slackEndPoint: Resource;
 }
 
 export class SlackIntegration extends Construct {
@@ -19,26 +23,29 @@ export class SlackIntegration extends Construct {
   constructor(
     scope: Construct,
     id: string,
-    { eventBus }: slackIntegrationProps
+    { eventBus, workspaceTable, slackEndPoint }: slackIntegrationProps
   ) {
     super(scope, id);
 
     const SLACK_SIGNING_SECRET = getEnvVariable("SLACK_SIGNING_SECRET");
-    const SLACK_BOT_TOKEN = getEnvVariable("SLACK_BOT_TOKEN");
 
-    this.function = new LambdaResource(
+    this.function = new SlackCustomResource(
       this,
-      buildResourceName("slack-integration"),
+      buildResourceName("traduire-slack-integration"),
       {
         lambdaEntry: getCdkHandlerPath(__dirname),
         environment: {
           SLACK_SIGNING_SECRET,
-          SLACK_BOT_TOKEN,
           EVENT_BUS: eventBus.eventBusName,
         },
       }
     );
 
     eventBus.grantPutEventsTo(this.function);
+    workspaceTable.grantReadData(this.function);
+
+    const eventsIntegrationEndPoint = slackEndPoint.addResource("events");
+    const eventsIntegration = new LambdaIntegration(this.function);
+    eventsIntegrationEndPoint.addMethod("POST", eventsIntegration);
   }
 }

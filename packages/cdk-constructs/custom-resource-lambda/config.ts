@@ -1,14 +1,11 @@
-import {
-  getStage,
-  sharedLambdaEsbuildConfig,
-} from "@event-driven-agents/helpers";
+import { getStage, sharedLambdaEsbuildConfig } from "@event-driven-agents/helpers";
 import { Duration } from "aws-cdk-lib";
 import { Role } from "aws-cdk-lib/aws-iam";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Construct } from "constructs";
 
-export interface LambdaProps {
+export interface SlackLambdaProps {
   lambdaEntry: string;
   environment?: Record<string, string>;
   timeout?: Duration;
@@ -17,8 +14,8 @@ export interface LambdaProps {
   runtime?: Runtime;
 }
 
-export class LambdaResource extends NodejsFunction {
-  constructor(scope: Construct, id: string, props: LambdaProps) {
+export class SlackCustomResource extends NodejsFunction {
+  constructor(scope: Construct, id: string, props: SlackLambdaProps) {
     const { lambdaEntry, environment, memorySize, role, timeout } = props;
 
     const functionName = `${id}-lambda`;

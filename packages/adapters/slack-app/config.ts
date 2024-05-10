@@ -1,7 +1,9 @@
 import { getEnvVariable } from "@event-driven-agents/helpers";
 import { App, AwsLambdaReceiver } from "@slack/bolt";
 
-export const instantiateApp = (): {
+export const SlackAppAdapter = (
+  accessToken: string
+): {
   app: App;
   awsLambdaReceiver: AwsLambdaReceiver;
 } => {
@@ -10,7 +12,7 @@ export const instantiateApp = (): {
   });
 
   const app = new App({
-    token: getEnvVariable("SLACK_BOT_TOKEN"),
+    token: accessToken,
     receiver: awsLambdaReceiver,
   });
 

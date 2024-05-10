@@ -1,4 +1,7 @@
-import { ElementTypeEnum, SlackInteractionPayload } from "./slackTypes";
+import {
+  ElementTypeEnum,
+  SlackInteractionPayload,
+} from "./types/interaction-payload";
 
 export const getStateValues = (
   body: SlackInteractionPayload,

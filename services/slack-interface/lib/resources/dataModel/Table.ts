@@ -7,8 +7,8 @@ const documentClient = new DynamoDB({
   region: getRegion(),
 });
 
-export const SlackIntegrationTable = new Table({
-  name: buildResourceName("slack-integration-table"),
+export const SlackWorkspaceTable = new Table({
+  name: buildResourceName("workspace-table"),
   partitionKey: "PK",
   sortKey: "SK",
   indexes: {

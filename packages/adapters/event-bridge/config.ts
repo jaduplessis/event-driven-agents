@@ -1,8 +1,8 @@
 import {
-  EventBridgeClient,
-  PutEventsCommand,
-  PutEventsCommandOutput,
-  PutEventsRequestEntry,
+    EventBridgeClient,
+    PutEventsCommand,
+    PutEventsCommandOutput,
+    PutEventsRequestEntry,
 } from "@aws-sdk/client-eventbridge";
 import { getEnvVariable } from "@event-driven-agents/helpers";
 

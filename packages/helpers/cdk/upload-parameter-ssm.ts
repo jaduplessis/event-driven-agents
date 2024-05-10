@@ -3,7 +3,7 @@ import {
   PutParameterCommandInput,
   SSMClient,
 } from "@aws-sdk/client-ssm";
-import { buildResourceName } from "@event-driven-agents/helpers";
+import { buildResourceName } from "./build-resource-name";
 
 export const uploadParameter = async (
   ssm: SSMClient,

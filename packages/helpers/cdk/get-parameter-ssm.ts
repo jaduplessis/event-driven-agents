@@ -1,5 +1,5 @@
 import { GetParameterCommand, SSMClient } from "@aws-sdk/client-ssm";
-import { buildResourceName } from "@event-driven-agents/helpers";
+import { buildResourceName } from "./build-resource-name";
 
 export const getParameter = async (
   ssm: SSMClient,
@@ -10,6 +10,7 @@ export const getParameter = async (
     Name: `/${buildResourceName(parameter)}`,
     WithDecryption: encrypted,
   };
+  console.log("input", input);
 
   const command = new GetParameterCommand(input);
   try {
