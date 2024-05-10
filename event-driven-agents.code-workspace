@@ -71,6 +71,22 @@
       "path": "services/slack-interface",
       "name": "slack-interface [service]"
     },
+    // {
+    //   "path": "services/brain",
+    //   "name": "brain [service]"
+    // },
+    // {
+    //   "path": "services/tools",
+    //   "name": "tools [service]"
+    // },
+    // {
+    //   "path": "services/memory",
+    //   "name": "memory [service]"
+    // },
+    // {
+    //   "path": "services/planning",
+    //   "name": "planning [service]"
+    // },
     {
       "path": "packages/cdk-constructs",
       "name": "cdk-constructs [library]"

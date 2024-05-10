@@ -1,5 +1,5 @@
 {
-  "name": "@event-driven-agents-traduire-gpt/root",
+  "name": "@event-driven-agents-gpt/root",
   "version": "1.0.0",
   "devDependencies": {
     "@commitlint/cli": "^17.3.0",
