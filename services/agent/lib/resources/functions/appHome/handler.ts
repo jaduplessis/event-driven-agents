@@ -1,6 +1,10 @@
 import { SSMClient } from "@aws-sdk/client-ssm";
-import { SlackAppAdapter } from "@slackbot/adapters";
-import { BaseEvent, getParameter, getRegion } from "@slackbot/helpers";
+import { SlackAppAdapter } from "@event-driven-agents/adapters";
+import {
+  BaseEvent,
+  getParameter,
+  getRegion,
+} from "@event-driven-agents/helpers";
 import { EventBridgeEvent } from "aws-lambda";
 import { getSettingsFromTeamId } from "../utils";
 import { createHome } from "./appHome";
@@ -18,10 +22,8 @@ export const handler = async (
     `api-keys/${teamId}/OPENAI_API_KEY`,
     true
   );
-  const settings = await getSettingsFromTeamId(teamId);
-  const { primaryLanguage, secondaryLanguage } = settings;
 
-  const homeView = createHome(apiKey, primaryLanguage, secondaryLanguage);
+  const homeView = createHome(apiKey);
 
   try {
     await app.client.views.publish({

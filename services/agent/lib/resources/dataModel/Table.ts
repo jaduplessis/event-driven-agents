@@ -1,14 +1,14 @@
 import { DynamoDB } from "@aws-sdk/client-dynamodb";
 import { Table } from "dynamodb-toolbox";
 
-import { buildResourceName, getRegion } from "@slackbot/helpers";
+import { buildResourceName, getRegion } from "@event-driven-agents/helpers";
 
 const documentClient = new DynamoDB({
   region: getRegion(),
 });
 
-export const TraduireTable = new Table({
-  name: buildResourceName("traduire-table"),
+export const AgentTable = new Table({
+  name: buildResourceName("agent-table"),
   partitionKey: "PK",
   sortKey: "SK",
   indexes: {

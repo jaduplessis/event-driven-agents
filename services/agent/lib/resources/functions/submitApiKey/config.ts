@@ -1,33 +1,27 @@
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 
-import { SlackCustomResource } from "@slackbot/cdk-constructs";
+import { SlackCustomResource } from "@event-driven-agents/cdk-constructs";
 import {
   buildParameterArnSsm,
   buildResourceName,
   getCdkHandlerPath,
   getEnvVariable,
   getRegion,
-} from "@slackbot/helpers";
+} from "@event-driven-agents/helpers";
 import { Stack } from "aws-cdk-lib";
-import { Table } from "aws-cdk-lib/aws-dynamodb";
 import { IEventBus, Rule } from "aws-cdk-lib/aws-events";
 import { LambdaFunction } from "aws-cdk-lib/aws-events-targets";
 import { PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 
-interface appHomeProps {
+interface submitApiKeyProps {
   eventBus: IEventBus;
-  traduireTable: Table;
 }
 
-export class AppHome extends Construct {
+export class SubmitApiKey extends Construct {
   public function: NodejsFunction;
 
-  constructor(
-    scope: Construct,
-    id: string,
-    { eventBus, traduireTable }: appHomeProps
-  ) {
+  constructor(scope: Construct, id: string, { eventBus }: submitApiKeyProps) {
     super(scope, id);
 
     const region = getRegion();
@@ -37,33 +31,33 @@ export class AppHome extends Construct {
 
     this.function = new SlackCustomResource(
       this,
-      buildResourceName("app-home-opened"),
+      buildResourceName("submit-api-key"),
       {
         lambdaEntry: getCdkHandlerPath(__dirname),
         environment: {
           SLACK_SIGNING_SECRET,
+          EVENT_BUS: eventBus.eventBusName,
         },
       }
     );
 
-    traduireTable.grantReadWriteData(this.function);
+    eventBus.grantPutEventsTo(this.function);
 
-    new Rule(this, buildResourceName("on-app-home-opened-event"), {
+    new Rule(this, buildResourceName("on-submit-api-key-event"), {
       eventBus,
       eventPattern: {
         source: ["application.slackIntegration"],
-        detailType: ["app.home.opened"],
+        detailType: ["submit.api.key"],
       },
       targets: [new LambdaFunction(this.function)],
     });
 
-    const accessPatternApiKey = buildResourceName("api-keys/*");
+    const accessPattern = buildResourceName("api-keys/*");
     const ssmReadPolicy = new PolicyStatement({
-      actions: ["ssm:GetParameter"],
-      resources: [
-        buildParameterArnSsm(`${accessPatternApiKey}`, region, accountId),
-      ],
+      actions: ["ssm:PutParameter"],
+      resources: [buildParameterArnSsm(`${accessPattern}`, region, accountId)],
     });
+
     this.function.addToRolePolicy(ssmReadPolicy);
   }
 }

@@ -1,13 +1,13 @@
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 
-import { SlackCustomResource } from "@slackbot/cdk-constructs";
+import { SlackCustomResource } from "@event-driven-agents/cdk-constructs";
 import {
   buildParameterArnSsm,
   buildResourceName,
   getCdkHandlerPath,
   getEnvVariable,
   getRegion,
-} from "@slackbot/helpers";
+} from "@event-driven-agents/helpers";
 import { Stack } from "aws-cdk-lib";
 import { IEventBus, Rule } from "aws-cdk-lib/aws-events";
 import { LambdaFunction } from "aws-cdk-lib/aws-events-targets";
