@@ -3,7 +3,6 @@ import { APIGatewayProxyHandler } from "aws-lambda";
 
 export const handler: APIGatewayProxyHandler = async () => {
   const slackClientId = getEnvVariable("SLACK_CLIENT_ID");
-
   const html = `
     <html>
       <body>

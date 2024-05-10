@@ -24,14 +24,14 @@ export class SlackInterfaceStack extends Stack {
     });
 
     const eventBridge = new EventBridge(this, "event-bridge", {
-      eventBusName: buildResourceName("traduire-global-event-bus"),
+      eventBusName: buildResourceName("snack-global-event-bus"),
     });
 
     const workspaceTable = new DynamoDBConstruct(this, "workspace-table", {
       tableName: buildResourceName("workspace-table"),
     });
 
-    new SlackIntegration(this, "traduire-slack-integration", {
+    new SlackIntegration(this, "snack-slack-integration", {
       eventBus: eventBridge.eventBus,
       workspaceTable: workspaceTable.table,
       slackEndPoint: apiGateway.slackEndPoint,
