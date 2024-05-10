@@ -33,6 +33,37 @@ export const handler: APIGatewayProxyHandler = async (
     }
   );
 
+  app.action("submit_api_key", async ({ ack, body, context }) => {
+    await ack();
+
+    await eventBridge.putEvent(
+      "application.slackIntegration",
+      {
+        accessToken,
+        teamId,
+        token: context.botToken,
+        user_id: body.user.id,
+        body,
+      },
+      "submit.api.key"
+    );
+  });
+
+  app.action("remove_api_key", async ({ ack, body, context }) => {
+    await ack();
+
+    await eventBridge.putEvent(
+      "application.slackIntegration",
+      {
+        accessToken,
+        teamId,
+        token: context.botToken,
+        user_id: body.user.id,
+      },
+      "remove.api.key"
+    );
+  });
+
   const response = await awsLambdaReceiver.start();
 
   return response(event, context, callback);
