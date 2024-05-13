@@ -1,7 +1,8 @@
 import { BaseEvent } from './baseEvent'
 
 export interface SendSlackMessageEvent extends BaseEvent {
-  // Fill in...
+  channel: string;
+  message: string;
 }
 
 export interface QueryTescoEvent extends BaseEvent {

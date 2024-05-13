@@ -4,11 +4,16 @@ import { SlackInteractionPayload } from "./interaction-payload";
 
 export interface SubmitApiKeyEvent extends BaseEvent {
   body: SlackInteractionPayload;
+  token: string
+}
+
+export interface RemoveApiKeyEvent extends BaseEvent {
+  body: SlackInteractionPayload;
+  token: string;
 }
 
 export interface AppHomeOpenedEvent extends BaseEvent {
   token: string;
-  user_id: string;
 }
 
 type MessageDetailsBase = KnownEventFromType<"message">;

@@ -12,12 +12,9 @@ node_modules
 cdk.out
 cdk.out/** */
 cdk.context.json
-services/traduire-gpt/.DS_Store
-services/traduire-gpt/cdk.out/dev-traduire-gpt.assets.json
-services/traduire-gpt/cdk.out/dev-traduire-gpt.template.json
-services/traduire-gpt/cdk.out/manifest.json
-services/traduire-gpt/cdk.out/tree.json
+ser
 
+**/dummyData
 
 # .env.* except .env.example
 .env*

@@ -75,10 +75,10 @@
       "path": "services/agent",
       "name": "agent [service]"
     },
-    // {
-    //   "path": "services/tools",
-    //   "name": "tools [service]"
-    // },
+    {
+      "path": "services/tools",
+      "name": "tools [service]"
+    },
     // {
     //   "path": "services/memory",
     //   "name": "memory [service]"
