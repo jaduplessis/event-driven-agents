@@ -1,6 +1,14 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
 
-import { EventBridgeAdapter, SlackAppAdapter } from "@event-driven-agents/adapters";
+import {
+  EventBridgeAdapter,
+  SlackAppAdapter,
+} from "@event-driven-agents/adapters";
+import {
+  MessageEvent,
+  RemoveApiKeyEvent,
+  SubmitApiKeyEvent,
+} from "@event-driven-agents/helpers";
 import { getAccessToken } from "../utils";
 
 const eventBridge = new EventBridgeAdapter();
@@ -36,14 +44,18 @@ export const handler: APIGatewayProxyHandler = async (
   app.action("submit_api_key", async ({ ack, body, context }) => {
     await ack();
 
+    const submitApiKeyEvent: SubmitApiKeyEvent = {
+      accessToken,
+      teamId,
+      token: context.botToken as string,
+      user_id: body.user.id,
+      body,
+    };
+
     await eventBridge.putEvent(
       "application.slackIntegration",
       {
-        accessToken,
-        teamId,
-        token: context.botToken,
-        user_id: body.user.id,
-        body,
+        ...submitApiKeyEvent,
       },
       "submit.api.key"
     );
@@ -52,15 +64,36 @@ export const handler: APIGatewayProxyHandler = async (
   app.action("remove_api_key", async ({ ack, body, context }) => {
     await ack();
 
+    const removeApiKeyEvent: RemoveApiKeyEvent = {
+      accessToken,
+      teamId,
+      token: context.botToken as string,
+      user_id: body.user.id,
+    };
+
     await eventBridge.putEvent(
       "application.slackIntegration",
       {
-        accessToken,
-        teamId,
-        token: context.botToken,
-        user_id: body.user.id,
+        ...removeApiKeyEvent,
       },
       "remove.api.key"
+    );
+  });
+
+  app.message(async ({ message, body }) => {
+    const messageEvent: MessageEvent = {
+      accessToken,
+      teamId,
+      message,
+      user_id: body.user.id,
+    };
+
+    await eventBridge.putEvent(
+      "application.slackIntegration",
+      {
+        ...messageEvent,
+      },
+      "message.received"
     );
   });
 
