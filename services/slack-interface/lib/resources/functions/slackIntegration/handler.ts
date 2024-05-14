@@ -80,12 +80,17 @@ export const handler: APIGatewayProxyHandler = async (
     );
   });
 
-  app.message(async ({ message, body }) => {
+  app.message(async ({ message }) => {
+    let user_id = "";
+    if ("user" in message) {
+      user_id = message.user as string;
+    }
+
     const messageEvent: MessageEvent = {
       accessToken,
       teamId,
       message,
-      user_id: body.user.id,
+      user_id,
     };
 
     await eventBridge.putEvent(
@@ -93,7 +98,7 @@ export const handler: APIGatewayProxyHandler = async (
       {
         ...messageEvent,
       },
-      "message.received"
+      "receive.message"
     );
   });
 

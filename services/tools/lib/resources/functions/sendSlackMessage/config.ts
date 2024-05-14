@@ -42,7 +42,7 @@ export class SendSlackMessage extends Construct {
     new Rule(this, buildResourceName("on-send-slack-message-event"), {
       eventBus,
       eventPattern: {
-        source: ["application.slackIntegration"],
+        source: ["agent.brain"],
         detailType: ["slack.send.message"],
       },
       targets: [new LambdaFunction(this.function)],
