@@ -49,5 +49,4 @@ export interface SlackInteractionPayload {
     type: string;
     action_ts: string;
   }>;
-  eventTime: number;
 }

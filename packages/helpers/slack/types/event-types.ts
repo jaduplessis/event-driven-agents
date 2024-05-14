@@ -1,14 +1,13 @@
-import { KnownEventFromType } from "@slack/bolt";
+import { KnownEventFromType, SlackAction } from "@slack/bolt";
 import { BaseEvent } from "../../agent";
 import { SlackInteractionPayload } from "./interaction-payload";
 
 export interface SubmitApiKeyEvent extends BaseEvent {
-  body: SlackInteractionPayload;
-  token: string
+  body: SlackAction;
+  token: string;
 }
 
 export interface RemoveApiKeyEvent extends BaseEvent {
-  body: SlackInteractionPayload;
   token: string;
 }
 

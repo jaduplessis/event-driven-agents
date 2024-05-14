@@ -8,9 +8,9 @@ import {
   SlackAppAdapter,
 } from "@event-driven-agents/adapters";
 import {
-  BaseEvent,
   buildResourceName,
   getRegion,
+  RemoveApiKeyEvent,
 } from "@event-driven-agents/helpers";
 import { EventBridgeEvent } from "aws-lambda";
 
@@ -18,7 +18,7 @@ const ssm = new SSMClient({ region: getRegion() });
 const eventBridge = new EventBridgeAdapter();
 
 export const handler = async (
-  event: EventBridgeEvent<"remove.api.key", BaseEvent>
+  event: EventBridgeEvent<"remove.api.key", RemoveApiKeyEvent>
 ) => {
   const { accessToken, teamId, token, user_id } = event.detail;
   const { app, awsLambdaReceiver } = SlackAppAdapter(accessToken);
