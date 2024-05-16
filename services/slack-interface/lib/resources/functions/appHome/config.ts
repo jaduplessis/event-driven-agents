@@ -9,7 +9,6 @@ import {
   getRegion,
 } from "@event-driven-agents/helpers";
 import { Stack } from "aws-cdk-lib";
-import { Table } from "aws-cdk-lib/aws-dynamodb";
 import { IEventBus, Rule } from "aws-cdk-lib/aws-events";
 import { LambdaFunction } from "aws-cdk-lib/aws-events-targets";
 import { PolicyStatement } from "aws-cdk-lib/aws-iam";
@@ -17,7 +16,6 @@ import { Construct } from "constructs";
 
 interface appHomeProps {
   eventBus: IEventBus;
-  agentTable: Table;
 }
 
 export class AppHome extends Construct {
@@ -26,7 +24,7 @@ export class AppHome extends Construct {
   constructor(
     scope: Construct,
     id: string,
-    { eventBus, agentTable }: appHomeProps
+    { eventBus }: appHomeProps
   ) {
     super(scope, id);
 
@@ -45,8 +43,6 @@ export class AppHome extends Construct {
         },
       }
     );
-
-    agentTable.grantReadWriteData(this.function);
 
     new Rule(this, buildResourceName("on-app-home-opened-event"), {
       eventBus,
