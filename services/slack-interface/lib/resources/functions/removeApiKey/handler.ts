@@ -8,6 +8,7 @@ import {
   SlackAppAdapter,
 } from "@event-driven-agents/adapters";
 import {
+  AppHomeOpenedEvent,
   buildResourceName,
   getRegion,
   RemoveApiKeyEvent,
@@ -20,7 +21,7 @@ const eventBridge = new EventBridgeAdapter();
 export const handler = async (
   event: EventBridgeEvent<"remove.api.key", RemoveApiKeyEvent>
 ) => {
-  const { accessToken, teamId, token, user_id } = event.detail;
+  const { accessToken, teamId, user_id } = event.detail.core;
   const { app, awsLambdaReceiver } = SlackAppAdapter(accessToken);
 
   const parameterName = buildResourceName(`api-keys/${teamId}/OPENAI_API_KEY`);
@@ -33,20 +34,25 @@ export const handler = async (
   await ssm.send(command);
 
   await app.client.chat.postMessage({
-    token,
+    token: accessToken,
     channel: user_id,
     text: "API Key deleted successfully!",
   });
 
   await awsLambdaReceiver.start();
 
+  const appHomeOpenedEvent: AppHomeOpenedEvent = {
+    core: {
+      accessToken,
+      teamId,
+      user_id,
+    },
+  };
+
   await eventBridge.putEvent(
     "application.slackIntegration",
     {
-      accessToken,
-      teamId,
-      token,
-      user_id,
+      ...appHomeOpenedEvent,
     },
     "app.home.opened"
   );

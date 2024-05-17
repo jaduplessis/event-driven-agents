@@ -17,7 +17,8 @@ const eventBridge = new EventBridgeAdapter();
 export const handler = async (
   event: EventBridgeEvent<"message.received", MessageEvent>
 ) => {
-  const { accessToken, user_id, teamId, message } = event.detail;
+  const { accessToken, user_id, teamId } = event.detail.core;
+  const { message } = event.detail.schema;
 
   await loadSsmValues(ssm, teamId);
 
@@ -48,11 +49,15 @@ export const handler = async (
   const dummyEvent = JSON.parse(dummyResponse) as BaseResponse;
 
   const eventDetail: SendSlackMessageEvent = {
-    accessToken,
-    user_id,
-    channel,
-    teamId,
-    ...dummyEvent.detail,
+    core: {
+      accessToken,
+      user_id,
+      teamId,
+    },
+    schema: {
+      channel,
+      ...dummyEvent.toolOptions,
+    },
   };
 
   await eventBridge.putEvent(
@@ -60,6 +65,6 @@ export const handler = async (
     {
       ...eventDetail,
     },
-    dummyEvent.detailType
+    dummyEvent.toolName
   );
 };

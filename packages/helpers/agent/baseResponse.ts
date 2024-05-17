@@ -1,6 +1,6 @@
 export interface BaseResponse {
-  detailType: string;
-  detail: {
+  toolName: string;
+  toolOptions: {
     message: string;
-  }
+  };
 }

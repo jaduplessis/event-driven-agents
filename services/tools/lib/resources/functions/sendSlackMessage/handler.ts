@@ -8,13 +8,15 @@ const ssm = new SSMClient({ region: getRegion() });
 export const handler = async (
   event: EventBridgeEvent<"slack.send.message", SendSlackMessageEvent>
 ) => {
-  const { accessToken, message, channel } = event.detail;
+  const { core, schema } = event.detail;
+  const { accessToken, user_id } = core;
+  const { message } = schema;
 
   const { app, awsLambdaReceiver } = SlackAppAdapter(accessToken);
 
   await app.client.chat.postMessage({
     token: accessToken,
-    channel,
+    channel: user_id,
     blocks: [
       {
         type: "section",

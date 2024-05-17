@@ -1,5 +1,7 @@
 export interface BaseEvent {
-  accessToken: string;
-  user_id: string
-  teamId: string;
+  core: {
+    accessToken: string;
+    user_id: string
+    teamId: string;
+  }
 }

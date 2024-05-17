@@ -13,7 +13,7 @@ const ssm = new SSMClient({ region: getRegion() });
 export const handler = async (
   event: EventBridgeEvent<"app.home.opened", AppHomeOpenedEvent>
 ) => {
-  const { accessToken, teamId, token, user_id } = event.detail;
+  const { accessToken, teamId, user_id } = event.detail.core
   const { app, awsLambdaReceiver } = SlackAppAdapter(accessToken);
 
   const apiKey = await getParameter(
@@ -26,7 +26,7 @@ export const handler = async (
 
   try {
     await app.client.views.publish({
-      token,
+      token: accessToken,
       user_id,
       view: homeView,
     });

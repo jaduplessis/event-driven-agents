@@ -5,6 +5,7 @@ import {
   SlackAppAdapter,
 } from "@event-driven-agents/adapters";
 import {
+  AppHomeOpenedEvent,
   MessageEvent,
   RemoveApiKeyEvent,
   SubmitApiKeyEvent,
@@ -25,31 +26,36 @@ export const handler: APIGatewayProxyHandler = async (
   app.event(
     "app_home_opened",
     async ({ event: home_event, context: home_context }) => {
-      const token = home_context.botToken ?? "";
       const user_id = home_event.user;
+
+      const appHomeOpenedEvent: AppHomeOpenedEvent = {
+        core: {
+          accessToken,
+          teamId,
+          user_id,
+        },
+      };
 
       await eventBridge.putEvent(
         "application.slackIntegration",
         {
-          accessToken,
-          teamId,
-          token,
-          user_id,
+          ...appHomeOpenedEvent,
         },
         "app.home.opened"
       );
     }
   );
 
-  app.action("submit_api_key", async ({ ack, body, context }) => {
+  app.action("submit_api_key", async ({ ack, body }) => {
     await ack();
 
     const submitApiKeyEvent: SubmitApiKeyEvent = {
-      accessToken,
-      teamId,
-      token: context.botToken as string,
-      user_id: body.user.id,
-      body,
+      core: {
+        accessToken,
+        teamId,
+        user_id: body.user.id,
+      },
+      schema: { body },
     };
 
     await eventBridge.putEvent(
@@ -65,10 +71,11 @@ export const handler: APIGatewayProxyHandler = async (
     await ack();
 
     const removeApiKeyEvent: RemoveApiKeyEvent = {
-      accessToken,
-      teamId,
-      token: context.botToken as string,
-      user_id: body.user.id,
+      core: {
+        accessToken,
+        teamId,
+        user_id: body.user.id,
+      },
     };
 
     await eventBridge.putEvent(
@@ -87,10 +94,14 @@ export const handler: APIGatewayProxyHandler = async (
     }
 
     const messageEvent: MessageEvent = {
-      accessToken,
-      teamId,
-      message,
-      user_id,
+      core: {
+        accessToken,
+        teamId,
+        user_id,
+      },
+      schema: {
+        message,
+      },
     };
 
     await eventBridge.putEvent(
