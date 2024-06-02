@@ -17,10 +17,10 @@ const eventBridge = new EventBridgeAdapter();
 export const handler = async (
   event: EventBridgeEvent<"message.received", MessageEvent>
 ) => {
-  const { accessToken, user_id, teamId } = event.detail.core;
+  const { core } = event.detail;
   const { message } = event.detail.schema;
 
-  await loadSsmValues(ssm, teamId);
+  await loadSsmValues(ssm, core.teamId);
 
   if (message === undefined || message.text === undefined) {
     return;
@@ -41,7 +41,7 @@ export const handler = async (
   } else {
     await MessageEntity.update({
       messageTs: ts,
-      teamId,
+      teamId: core.teamId,
     });
   }
 
@@ -49,11 +49,7 @@ export const handler = async (
   const dummyEvent = JSON.parse(dummyResponse) as BaseResponse;
 
   const eventDetail: SendSlackMessageEvent = {
-    core: {
-      accessToken,
-      user_id,
-      teamId,
-    },
+    core,
     schema: {
       channel,
       ...dummyEvent.toolOptions,

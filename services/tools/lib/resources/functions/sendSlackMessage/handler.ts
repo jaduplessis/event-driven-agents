@@ -10,13 +10,13 @@ export const handler = async (
 ) => {
   const { core, schema } = event.detail;
   const { accessToken, user_id } = core;
-  const { message } = schema;
+  const { channel, message } = schema;
 
   const { app, awsLambdaReceiver } = SlackAppAdapter(accessToken);
 
   await app.client.chat.postMessage({
     token: accessToken,
-    channel: user_id,
+    channel,
     blocks: [
       {
         type: "section",
