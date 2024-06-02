@@ -1,1 +1,1 @@
-export { SendSlackMessage } from './sendSlackMessage/config'
+export { SendSlackMessage } from './sendMessage/config'

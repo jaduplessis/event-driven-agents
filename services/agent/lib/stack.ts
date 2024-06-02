@@ -4,12 +4,7 @@ import { Construct } from "constructs";
 import { DynamoDBConstruct } from "@event-driven-agents/cdk-constructs";
 import { buildResourceName, eventBusName } from "@event-driven-agents/helpers";
 import { EventBus } from "aws-cdk-lib/aws-events";
-import {
-  AppHome,
-  ReceiveMessage,
-  RemoveApiKey,
-  SubmitApiKey,
-} from "./resources/functions";
+import { ReceiveMessage } from "./resources/functions";
 
 export class AgentStack extends Stack {
   constructor(scope: Construct, id: string) {
@@ -24,19 +19,6 @@ export class AgentStack extends Stack {
       "EventBridge",
       eventBusName
     );
-
-    new SubmitApiKey(this, "submit-api-key", {
-      eventBus,
-    });
-
-    new RemoveApiKey(this, "remove-api-key", {
-      eventBus,
-    });
-
-    new AppHome(this, "app-home", {
-      eventBus,
-      agentTable: agentTable.table,
-    });
 
     new ReceiveMessage(this, "receive-message", {
       eventBus,

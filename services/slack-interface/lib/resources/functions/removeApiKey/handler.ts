@@ -1,6 +1,6 @@
 import {
-  PutParameterCommand,
-  PutParameterCommandInput,
+  DeleteParameterCommand,
+  DeleteParameterCommandInput,
   SSMClient,
 } from "@aws-sdk/client-ssm";
 import {
@@ -8,10 +8,10 @@ import {
   SlackAppAdapter,
 } from "@event-driven-agents/adapters";
 import {
+  AppHomeOpenedEvent,
   buildResourceName,
   getRegion,
-  getStateValues,
-  SubmitApiKeyEvent,
+  RemoveApiKeyEvent,
 } from "@event-driven-agents/helpers";
 import { EventBridgeEvent } from "aws-lambda";
 
@@ -19,41 +19,40 @@ const ssm = new SSMClient({ region: getRegion() });
 const eventBridge = new EventBridgeAdapter();
 
 export const handler = async (
-  event: EventBridgeEvent<"submit.api.key", SubmitApiKeyEvent>
+  event: EventBridgeEvent<"remove.api.key", RemoveApiKeyEvent>
 ) => {
-  const { accessToken, teamId, token, user_id, body } = event.detail;
-
-  const apiKey = getStateValues(body, "api_key_input");
-
+  const { accessToken, teamId, user_id } = event.detail.core;
   const { app, awsLambdaReceiver } = SlackAppAdapter(accessToken);
 
   const parameterName = buildResourceName(`api-keys/${teamId}/OPENAI_API_KEY`);
 
-  const input: PutParameterCommandInput = {
+  const input: DeleteParameterCommandInput = {
     Name: `/${parameterName}`,
-    Value: apiKey,
-    Type: "SecureString",
-    Overwrite: true,
   };
 
-  const command = new PutParameterCommand(input);
+  const command = new DeleteParameterCommand(input);
   await ssm.send(command);
 
   await app.client.chat.postMessage({
-    token,
+    token: accessToken,
     channel: user_id,
-    text: "API Key submitted successfully!",
+    text: "API Key deleted successfully!",
   });
 
   await awsLambdaReceiver.start();
 
+  const appHomeOpenedEvent: AppHomeOpenedEvent = {
+    core: {
+      accessToken,
+      teamId,
+      user_id,
+    },
+  };
+
   await eventBridge.putEvent(
     "application.slackIntegration",
     {
-      accessToken,
-      teamId,
-      token,
-      user_id,
+      ...appHomeOpenedEvent,
     },
     "app.home.opened"
   );

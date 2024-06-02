@@ -29,7 +29,7 @@ export class SendSlackMessage extends Construct {
 
     this.function = new SlackCustomResource(
       this,
-      buildResourceName("send-slack-message"),
+      buildResourceName("send-message"),
       {
         lambdaEntry: getCdkHandlerPath(__dirname),
         timeout: Duration.seconds(30),
@@ -39,11 +39,11 @@ export class SendSlackMessage extends Construct {
       }
     );
 
-    new Rule(this, buildResourceName("on-send-slack-message-event"), {
+    new Rule(this, buildResourceName("on-send-message-event"), {
       eventBus,
       eventPattern: {
         source: ["agent.brain"],
-        detailType: ["slack.send.message"],
+        detailType: ["send.message"],
       },
       targets: [new LambdaFunction(this.function)],
     });

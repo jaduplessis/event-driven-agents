@@ -12,9 +12,12 @@ import {
   getStage,
 } from "@event-driven-agents/helpers";
 import {
+  AppHome,
+  RemoveApiKey,
   SlackAuthCallback,
   SlackInstall,
   SlackIntegration,
+  SubmitApiKey,
 } from "./resources/functions";
 
 export class SlackInterfaceStack extends Stack {
@@ -48,6 +51,18 @@ export class SlackInterfaceStack extends Stack {
     new SlackAuthCallback(this, "slack-auth-callback", {
       workspaceTable: workspaceTable.table,
       slackEndPoint: apiGateway.slackEndPoint,
+    });
+
+    new AppHome(this, "app-home", {
+      eventBus: eventBridge.eventBus,
+    });
+
+    new SubmitApiKey(this, "submit-api-key", {
+      eventBus: eventBridge.eventBus,
+    });
+
+    new RemoveApiKey(this, "remove-api-key", {
+      eventBus: eventBridge.eventBus,
     });
   }
 }

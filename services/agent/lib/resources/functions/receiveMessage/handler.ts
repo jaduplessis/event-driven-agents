@@ -1,15 +1,18 @@
 import { SSMClient } from "@aws-sdk/client-ssm";
 import { EventBridgeAdapter } from "@event-driven-agents/adapters";
 import {
-  BaseResponse,
+  getEnvVariable,
   getRegion,
   MessageEvent,
-  SendSlackMessageEvent,
+  sendMessageDefinition,
+  ToolEvent,
+  ToolRequest,
 } from "@event-driven-agents/helpers";
 import { EventBridgeEvent } from "aws-lambda";
 import { MessageEntity } from "../../dataModel";
+import { invoke } from "../utils/invoke";
 import { loadSsmValues } from "../utils/ssm";
-import { stringJson } from "./dummyData/event";
+import { constructSystemPrompt } from "./system";
 
 const ssm = new SSMClient({ region: getRegion() });
 const eventBridge = new EventBridgeAdapter();
@@ -17,9 +20,10 @@ const eventBridge = new EventBridgeAdapter();
 export const handler = async (
   event: EventBridgeEvent<"message.received", MessageEvent>
 ) => {
-  const { accessToken, user_id, teamId, message } = event.detail;
+  const { core } = event.detail;
+  const { message } = event.detail.schema;
 
-  await loadSsmValues(ssm, teamId);
+  await loadSsmValues(ssm, core.teamId);
 
   if (message === undefined || message.text === undefined) {
     return;
@@ -40,19 +44,35 @@ export const handler = async (
   } else {
     await MessageEntity.update({
       messageTs: ts,
-      teamId,
+      teamId: core.teamId,
     });
   }
 
-  const dummyResponse = stringJson(text);
-  const dummyEvent = JSON.parse(dummyResponse) as BaseResponse;
+  const systemPrompt = constructSystemPrompt([sendMessageDefinition]);
+  const humanPrompt = text;
+  const modelConfig = {
+    apiKey: getEnvVariable("OPENAI_API_KEY"),
+    model: "gpt-4o",
+    temperature: 1,
+    maxTokens: 500,
+  };
 
-  const eventDetail: SendSlackMessageEvent = {
-    accessToken,
-    user_id,
-    channel,
-    teamId,
-    ...dummyEvent.detail,
+  const response = await invoke({ systemPrompt, humanPrompt, modelConfig });
+
+  const tools = JSON.parse(response) as ToolRequest[];
+  const currentTool = tools.shift();
+
+  if (currentTool === undefined) {
+    throw new Error("No tool found");
+  }
+
+  const eventDetail: ToolEvent = {
+    core: {
+      ...core,
+      channel,
+    },
+    currentTool,
+    followingTools: tools,
   };
 
   await eventBridge.putEvent(
@@ -60,6 +80,6 @@ export const handler = async (
     {
       ...eventDetail,
     },
-    dummyEvent.detailType
+    currentTool.tool
   );
 };
