@@ -1,12 +1,21 @@
-import { BaseEvent } from "./baseEvent";
+import { ToolDefinition, ToolEvent } from "./schemas";
 
-export interface SendSlackMessageEvent extends BaseEvent {
-  schema: {
-    channel: string;
-    message: string;
-  }
-}
+export const sendMessageDefinition: ToolDefinition = {
+  name: "send.message",
+  description: "Send a reply message to the user",
+  args: {
+    message: {
+      type: "string",
+      description: "The message to send",
+    },
+  },
+};
 
-export interface QueryTescoEvent extends BaseEvent {
-  // Fill in...
+export interface SendMessageEvent extends ToolEvent {
+  currentTool: {
+    actionId: string;
+    args: {
+      message: string;
+    };
+  };
 }

@@ -1,15 +1,18 @@
 import { SSMClient } from "@aws-sdk/client-ssm";
 import { EventBridgeAdapter } from "@event-driven-agents/adapters";
 import {
-  BaseResponse,
+  getEnvVariable,
   getRegion,
   MessageEvent,
-  SendSlackMessageEvent,
+  sendMessageDefinition,
+  ToolEvent,
+  ToolRequest,
 } from "@event-driven-agents/helpers";
 import { EventBridgeEvent } from "aws-lambda";
 import { MessageEntity } from "../../dataModel";
+import { invoke } from "../utils/invoke";
 import { loadSsmValues } from "../utils/ssm";
-import { stringJson } from "./dummyData/event";
+import { constructSystemPrompt } from "./system";
 
 const ssm = new SSMClient({ region: getRegion() });
 const eventBridge = new EventBridgeAdapter();
@@ -45,15 +48,31 @@ export const handler = async (
     });
   }
 
-  const dummyResponse = stringJson(text);
-  const dummyEvent = JSON.parse(dummyResponse) as BaseResponse;
+  const systemPrompt = constructSystemPrompt([sendMessageDefinition]);
+  const humanPrompt = text;
+  const modelConfig = {
+    apiKey: getEnvVariable("OPENAI_API_KEY"),
+    model: "gpt-4o",
+    temperature: 1,
+    maxTokens: 500,
+  };
 
-  const eventDetail: SendSlackMessageEvent = {
-    core,
-    schema: {
+  const response = await invoke({ systemPrompt, humanPrompt, modelConfig });
+
+  const tools = JSON.parse(response) as ToolRequest[];
+  const currentTool = tools.shift();
+
+  if (currentTool === undefined) {
+    throw new Error("No tool found");
+  }
+
+  const eventDetail: ToolEvent = {
+    core: {
+      ...core,
       channel,
-      ...dummyEvent.toolOptions,
     },
+    currentTool,
+    followingTools: tools,
   };
 
   await eventBridge.putEvent(
@@ -61,6 +80,6 @@ export const handler = async (
     {
       ...eventDetail,
     },
-    dummyEvent.toolName
+    currentTool.tool
   );
 };
