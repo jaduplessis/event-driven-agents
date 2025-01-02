@@ -1,5 +1,7 @@
+import { getEnvVariable } from "@event-driven-agents/helpers";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { ChatOpenAI } from "@langchain/openai";
+import OpenAI from "openai";
 
 interface ModelConfig {
   apiKey: string;
@@ -13,6 +15,10 @@ interface InvokeParams {
   humanPrompt: string;
   modelConfig: ModelConfig;
 }
+
+const oai = new OpenAI({
+  apiKey: getEnvVariable("OPENAI_API_KEY"),
+});
 
 export const invoke = async ({
   systemPrompt,

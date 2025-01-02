@@ -6,11 +6,10 @@ import {
   MessageEvent,
   sendMessageDefinition,
   ToolEvent,
-  ToolRequest,
 } from "@event-driven-agents/helpers";
 import { EventBridgeEvent } from "aws-lambda";
 import { MessageEntity } from "../../dataModel";
-import { invoke } from "../utils/invoke";
+import { generateTasksList } from "../utils/generateTasksList";
 import { loadSsmValues } from "../utils/ssm";
 import { constructSystemPrompt } from "./system";
 
@@ -57,14 +56,12 @@ export const handler = async (
     maxTokens: 500,
   };
 
-  const response = await invoke({ systemPrompt, humanPrompt, modelConfig });
+  const toolsList = await generateTasksList({
+    systemPrompt,
+    humanPrompt,
+  });
 
-  const tools = JSON.parse(response) as ToolRequest[];
-  const currentTool = tools.shift();
-
-  if (currentTool === undefined) {
-    throw new Error("No tool found");
-  }
+  const [currentTool, ...followingTools] = toolsList.steps;
 
   const eventDetail: ToolEvent = {
     core: {
@@ -72,7 +69,7 @@ export const handler = async (
       channel,
     },
     currentTool,
-    followingTools: tools,
+    followingTools,
   };
 
   await eventBridge.putEvent(
@@ -80,6 +77,6 @@ export const handler = async (
     {
       ...eventDetail,
     },
-    currentTool.tool
+    `tools.${currentTool.function.name}`
   );
 };
