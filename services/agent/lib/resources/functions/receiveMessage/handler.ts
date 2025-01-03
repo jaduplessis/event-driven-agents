@@ -1,7 +1,6 @@
 import { SSMClient } from "@aws-sdk/client-ssm";
 import { EventBridgeAdapter } from "@event-driven-agents/adapters";
 import {
-  getEnvVariable,
   getRegion,
   MessageEvent,
   sendMessageDefinition,
@@ -47,21 +46,21 @@ export const handler = async (
     });
   }
 
-  const systemPrompt = constructSystemPrompt([sendMessageDefinition]);
+  const systemPrompt = constructSystemPrompt();
   const humanPrompt = text;
-  const modelConfig = {
-    apiKey: getEnvVariable("OPENAI_API_KEY"),
-    model: "gpt-4o",
-    temperature: 1,
-    maxTokens: 500,
-  };
+  const tools = [sendMessageDefinition];
 
   const toolsList = await generateTasksList({
     systemPrompt,
     humanPrompt,
+    tools,
   });
 
-  const [currentTool, ...followingTools] = toolsList.steps;
+  console.log(
+    `Plan to run tools and configurations: ${JSON.stringify(toolsList, null, 2)}`
+  );
+
+  const [currentTool, ...followingTools] = toolsList;
 
   const eventDetail: ToolEvent = {
     core: {

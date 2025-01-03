@@ -1,5 +1,5 @@
 import { SSMClient } from "@aws-sdk/client-ssm";
-import { getParameter } from "@slackbot/helpers";
+import { getParameter } from "@event-driven-agents/helpers";
 
 export const loadSsmValues = async (
   ssm: SSMClient,

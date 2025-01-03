@@ -35,44 +35,16 @@ export const Tools = toolsEnumSchema.Values;
 //     }
 // }
 
-const toolParameterEnum = z.enum(["string", "number", "boolean", "object"]);
-export type ToolParameterEnum = z.infer<typeof toolParameterEnum>;
-
-export const toolPropertiesSchema = z.record(
-  z.object({
-    type: toolParameterEnum,
-    description: z.string(),
-  })
-);
-
-export const toolDefinitionSchema = z.object({
-  name: z.string(),
-  description: z.string(),
-  parameters: z.object({
-    properties: toolPropertiesSchema,
-    required: z.array(z.string()),
-  }),
-  output: z
-    .object({
-      properties: toolPropertiesSchema,
-    })
-    .nullable(),
-});
-export type ToolDefinition = z.infer<typeof toolDefinitionSchema>;
-
 export const toolRequestSchema = z.object({
   actionId: z.string(),
   function: z.object({
-    name: toolsEnumSchema,
-    arguments: z.array(z.string()),
+    name: z.string(),
+    arguments: z.record(z.any()),
   }),
 });
 export type ToolRequest = z.infer<typeof toolRequestSchema>;
 
-export const toolsListSchema = z.object({
-  steps: z.array(toolRequestSchema),
-});
-
+export const toolsListSchema = z.array(toolRequestSchema);
 export type ToolsList = z.infer<typeof toolsListSchema>;
 
 export const baseEventSchema = z.object({

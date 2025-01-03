@@ -1,11 +1,5 @@
-import { ToolDefinition } from "@event-driven-agents/helpers";
-
-export const constructSystemPrompt = (tools: ToolDefinition[]) => {
-  return `Here is your available tool list:
-  [
-    ${tools.map((tool) => `${JSON.stringify(tool, null, 2)}`).join(",\n")}
-  ]
-
+export const constructSystemPrompt = () => {
+  return `
 For the given objective, come up with a simple step-by-step plan. 
 This plan should involve individual tasks, that if executed correctly will achieve the intended goal. 
 Each step is constrained to be on of the available tools indicated in the tool list. 

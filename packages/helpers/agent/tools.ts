@@ -1,42 +1,50 @@
-import { ToolDefinition, Tools } from "./schemas";
+import { ChatCompletionTool } from "openai/resources";
+import { z } from "zod";
+import { toolRequestSchema, Tools } from "./schemas";
 
-export const sendMessageDefinition: ToolDefinition = {
-  name: Tools.sendMessage,
-  description: "Send a reply message to the user",
-  parameters: {
-    properties: {
-      message: {
-        type: "string",
-        description: "The message to send",
+export const sendMessageDefinition: ChatCompletionTool = {
+  type: "function",
+  function: {
+    name: Tools.sendMessage,
+    parameters: {
+      type: "object",
+      properties: {
+        message: {
+          type: "string",
+          description: "The message to send",
+        },
       },
+      required: ["message"],
     },
-    required: ["message"],
   },
-  output: null,
 };
 
-export const googleSearchDefinition: ToolDefinition = {
-  name: Tools.googleSearch,
-  description: "Search for information on Google",
-  parameters: {
-    properties: {
-      query: {
-        type: "string",
-        description: "The search query",
+export const sendMessageSchema = toolRequestSchema.extend({
+  function: toolRequestSchema.shape.function.extend({
+    arguments: z.object({
+      message: z.string(),
+    }),
+  }),
+});
+export type SendMessageRequest = z.infer<typeof sendMessageSchema>;
+
+export const googleSearchDefinition: ChatCompletionTool = {
+  type: "function",
+  function: {
+    name: Tools.googleSearch,
+    parameters: {
+      type: "object",
+      properties: {
+        query: {
+          type: "string",
+          description: "The search query",
+        },
+        k: {
+          type: "number",
+          description: "The number of results to return. Default is 1",
+        },
       },
-      k: {
-        type: "number",
-        description: "The number of results to return. Default is 1",
-      },
-    },
-    required: ["query", "k"],
-  },
-  output: {
-    properties: {
-      result: {
-        type: "string",
-        description: "The summary of the top {{ k }} results",
-      },
+      required: ["query", "k"],
     },
   },
 };

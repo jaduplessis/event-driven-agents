@@ -68,7 +68,6 @@ export class ReceiveMessage extends Construct {
         buildParameterArnSsm(`${apiAccessPattern}`, region, accountId),
       ],
     });
-
     this.function.addToRolePolicy(ssmReadPolicy);
   }
 }

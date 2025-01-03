@@ -4,7 +4,7 @@ import {
   toolsListSchema,
 } from "@event-driven-agents/helpers";
 import OpenAI from "openai";
-import { zodResponseFormat } from "openai/helpers/zod";
+import { ChatCompletionTool } from "openai/resources";
 
 interface ModelConfig {
   apiKey: string;
@@ -16,17 +16,19 @@ interface ModelConfig {
 interface InvokeParams {
   systemPrompt: string;
   humanPrompt: string;
+  tools: ChatCompletionTool[];
 }
-
-const openai = new OpenAI({
-  apiKey: getEnvVariable("OPENAI_API_KEY"),
-});
 
 export const generateTasksList = async ({
   systemPrompt,
   humanPrompt,
+  tools,
 }: InvokeParams): Promise<ToolsList> => {
-  const response = await openai.beta.chat.completions.parse({
+  const openai = new OpenAI({
+    apiKey: getEnvVariable("OPENAI_API_KEY"),
+  });
+
+  const response = await openai.chat.completions.create({
     model: "gpt-4o-2024-08-06",
     messages: [
       {
@@ -38,14 +40,12 @@ export const generateTasksList = async ({
         content: humanPrompt,
       },
     ],
-    response_format: zodResponseFormat(toolsListSchema, "tools_list"),
+    tools,
   });
 
-  const parsedResponse = response.choices[0].message.parsed;
+  const data = JSON.parse(response.choices[0].message.content as string);
 
-  if (!parsedResponse) {
-    throw new Error("Failed to parse response");
-  }
+  const parsedResponse = toolsListSchema.parse(data);
 
   return parsedResponse;
 };

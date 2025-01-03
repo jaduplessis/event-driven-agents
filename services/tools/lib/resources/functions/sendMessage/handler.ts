@@ -1,19 +1,17 @@
-import { SSMClient } from "@aws-sdk/client-ssm";
 import { SlackAppAdapter } from "@event-driven-agents/adapters";
-import { getRegion, SendMessageEvent } from "@event-driven-agents/helpers";
+import { ToolEvent } from "@event-driven-agents/helpers";
 import { EventBridgeEvent } from "aws-lambda";
-
-const ssm = new SSMClient({ region: getRegion() });
+import { sendMessageSchema } from "../../../models";
 
 export const handler = async (
-  event: EventBridgeEvent<"send.message", SendMessageEvent>
+  event: EventBridgeEvent<`tools.*`, ToolEvent>
 ) => {
   const { core, currentTool } = event.detail;
   const { accessToken, channel } = core;
   if (channel === undefined) {
     throw new Error("Channel is required to send a message");
   }
-  const message = currentTool.args.message;
+  const { message } = sendMessageSchema.parse(currentTool.function.arguments);
 
   const { app, awsLambdaReceiver } = SlackAppAdapter(accessToken);
 
