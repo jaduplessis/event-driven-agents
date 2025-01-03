@@ -3,7 +3,7 @@ import { Construct } from "constructs";
 
 import { eventBusName } from "@event-driven-agents/helpers";
 import { EventBus } from "aws-cdk-lib/aws-events";
-import { SendSlackMessage } from "./resources/functions";
+import { QueryTesco, SendSlackMessage } from "./resources/functions";
 
 export class ToolsStack extends Stack {
   constructor(scope: Construct, id: string) {
@@ -16,6 +16,10 @@ export class ToolsStack extends Stack {
     );
 
     new SendSlackMessage(this, "SendSlackMessage", {
+      eventBus,
+    });
+
+    new QueryTesco(this, "QueryTesco", {
       eventBus,
     });
   }

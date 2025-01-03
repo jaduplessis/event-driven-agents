@@ -3,6 +3,7 @@ import { EventBridgeAdapter } from "@event-driven-agents/adapters";
 import {
   getRegion,
   MessageEvent,
+  queryTescoDefinition,
   sendMessageDefinition,
   ToolEvent,
 } from "@event-driven-agents/helpers";
@@ -48,7 +49,9 @@ export const handler = async (
 
   const systemPrompt = constructSystemPrompt();
   const humanPrompt = text;
-  const tools = [sendMessageDefinition];
+  const tools = [sendMessageDefinition, queryTescoDefinition];
+
+  console.log(`Tools: ${JSON.stringify(tools, null, 2)}`);
 
   const toolsList = await generateTasksList({
     systemPrompt,

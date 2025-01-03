@@ -15,28 +15,8 @@ This is the event object that is sent to the tool. It is based off of the ToolRe
 extended to contain additional information that the tool may need to know about the event.
 */
 
-export const toolsEnumSchema = z.enum(["sendMessage", "googleSearch"]);
-export type ToolsEnum = z.infer<typeof toolsEnumSchema>;
-export const Tools = toolsEnumSchema.Values;
-
-// {
-//     "name": "get_delivery_date",
-//     "description": "Get the delivery date for a customer's order. Call this whenever you need to know the delivery date, for example when a customer asks 'Where is my package'",
-//     "parameters": {
-//         "type": "object",
-//         "properties": {
-//             "order_id": {
-//                 "type": "string",
-//                 "description": "The customer's order ID."
-//             }
-//         },
-//         "required": ["order_id"],
-//         "additionalProperties": false
-//     }
-// }
-
 export const toolRequestSchema = z.object({
-  actionId: z.string(),
+  id: z.string(),
   function: z.object({
     name: z.string(),
     arguments: z.record(z.any()),
