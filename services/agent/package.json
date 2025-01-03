@@ -22,7 +22,8 @@
     "dotenv": "^16.3.1",
     "dynamodb-toolbox": "^0.8.5",
     "langchain": "^0.2.4",
-    "openai": "^4.0.0"
+    "openai": "^4.77.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.124",
@@ -51,6 +52,7 @@
     "deploy": "cdk deploy",
     "destroy": "cdk destroy --force",
     "test": "vitest run --coverage --passWithNoTests",
-    "test-inte": "vitest run --coverage --passWithNoTests -c vitest.test-inte.config.ts"
+    "test-inte": "vitest run --coverage --passWithNoTests -c vitest.test-inte.config.ts",
+    "test-type": "tsc --noEmit --emitDeclarationOnly false --project ./tsconfig.json"
   }
 }

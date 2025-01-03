@@ -5,7 +5,9 @@
     "@aws-sdk/client-ssm": "^3.556.0",
     "@slack/bolt": "^3.14.0",
     "@swarmion/serverless-helpers": "^0.31.3",
-    "aws-sdk": "^2.1456.0"
+    "aws-sdk": "^2.1456.0",
+    "openai": "^4.77.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/chance": "1.1.6",

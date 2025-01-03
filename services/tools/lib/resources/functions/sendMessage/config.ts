@@ -5,6 +5,7 @@ import {
   buildResourceName,
   getCdkHandlerPath,
   getEnvVariable,
+  Tools,
 } from "@event-driven-agents/helpers";
 import { Duration } from "aws-cdk-lib";
 import { IEventBus, Rule } from "aws-cdk-lib/aws-events";
@@ -43,7 +44,7 @@ export class SendSlackMessage extends Construct {
       eventBus,
       eventPattern: {
         source: ["agent.brain"],
-        detailType: ["send.message"],
+        detailType: [`tools.${Tools.sendMessage}`],
       },
       targets: [new LambdaFunction(this.function)],
     });
