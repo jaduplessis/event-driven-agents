@@ -5,6 +5,7 @@ import {
 } from "@event-driven-agents/helpers";
 import OpenAI from "openai";
 import { ChatCompletionTool } from "openai/resources";
+import { parseArguments } from "./parseArguments";
 
 interface ModelConfig {
   apiKey: string;
@@ -43,7 +44,16 @@ export const generateTasksList = async ({
     tools,
   });
 
-  const data = JSON.parse(response.choices[0].message.content as string);
+  console.log(JSON.stringify(response, null, 2));
+
+  const message = response.choices[0].message;
+
+  let data = {};
+  if (message.content) {
+    data = JSON.parse(response.choices[0].message.content as string);
+  } else if (message.tool_calls) {
+    data = parseArguments(message.tool_calls);
+  }
 
   const parsedResponse = toolsListSchema.parse(data);
 

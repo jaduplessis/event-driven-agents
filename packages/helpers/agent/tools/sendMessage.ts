@@ -1,12 +1,11 @@
-import { ChatCompletionTool } from "openai/resources";
+import { ChatCompletionTool } from "openai/resources/chat/completions";
 
 import { z } from "zod";
-import { Tools } from "../schemas";
 
 export const sendMessageDefinition: ChatCompletionTool = {
   type: "function",
   function: {
-    name: Tools.sendMessage,
+    name: "sendMessage",
     parameters: {
       type: "object",
       properties: {
