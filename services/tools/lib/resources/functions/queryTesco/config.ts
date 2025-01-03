@@ -29,10 +29,13 @@ export class QueryTesco extends Construct {
         lambdaEntry: getCdkHandlerPath(__dirname),
         timeout: Duration.seconds(30),
         environment: {
+          EVENT_BUS: eventBus.eventBusName,
           TESCO_API_KEY: getEnvVariable("TESCO_API_KEY"),
         },
       }
     );
+
+    eventBus.grantPutEventsTo(this.function);
 
     new Rule(this, buildResourceName("on-query-tesco-event"), {
       eventBus,

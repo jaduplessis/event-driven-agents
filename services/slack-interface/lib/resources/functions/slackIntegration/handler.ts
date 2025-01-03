@@ -109,7 +109,7 @@ export const handler: APIGatewayProxyHandler = async (
       {
         ...messageEvent,
       },
-      "receive.message"
+      "agent.plan"
     );
   });
 
