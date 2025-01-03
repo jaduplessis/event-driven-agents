@@ -1,7 +1,6 @@
 import { SlackAppAdapter } from "@event-driven-agents/adapters";
-import { ToolEvent } from "@event-driven-agents/helpers";
+import { sendMessageSchema, ToolEvent } from "@event-driven-agents/helpers";
 import { EventBridgeEvent } from "aws-lambda";
-import { sendMessageSchema } from "../../../models";
 
 export const handler = async (
   event: EventBridgeEvent<`tools.*`, ToolEvent>

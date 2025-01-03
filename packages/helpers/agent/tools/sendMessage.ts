@@ -1,7 +1,7 @@
-import { Tools } from "@event-driven-agents/helpers";
 import { ChatCompletionTool } from "openai/resources";
 
 import { z } from "zod";
+import { Tools } from "../schemas";
 
 export const sendMessageDefinition: ChatCompletionTool = {
   type: "function",
