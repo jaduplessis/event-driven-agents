@@ -38,6 +38,9 @@ export const baseEventSchema = z.object({
 export type BaseEvent = z.infer<typeof baseEventSchema>;
 
 export const toolEventSchema = baseEventSchema.extend({
+  message: z.string(),
+  planResults: z.array(z.string()),
+  previousTools: z.array(toolRequestSchema),
   currentTool: toolRequestSchema,
   followingTools: z.array(toolRequestSchema),
 });

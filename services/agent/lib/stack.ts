@@ -4,7 +4,7 @@ import { Construct } from "constructs";
 import { DynamoDBConstruct } from "@event-driven-agents/cdk-constructs";
 import { buildResourceName, eventBusName } from "@event-driven-agents/helpers";
 import { EventBus } from "aws-cdk-lib/aws-events";
-import { ReceiveMessage } from "./resources/functions";
+import { Plan, Replan } from "./resources/functions";
 
 export class AgentStack extends Stack {
   constructor(scope: Construct, id: string) {
@@ -20,7 +20,12 @@ export class AgentStack extends Stack {
       eventBusName
     );
 
-    new ReceiveMessage(this, "receive-message", {
+    new Plan(this, "plan", {
+      eventBus,
+      agentTable: agentTable.table,
+    });
+
+    new Replan(this, "replan", {
       eventBus,
       agentTable: agentTable.table,
     });

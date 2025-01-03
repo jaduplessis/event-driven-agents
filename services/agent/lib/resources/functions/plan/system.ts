@@ -1,3 +1,5 @@
+import { toolConstraints } from "../prompts/toolConstraints";
+
 export const constructSystemPrompt = () => {
   return `
   You are the helpful and adaptive snacks assistant. Your goal is to orchestrate the delivery of snacks each week to the team.
@@ -20,51 +22,5 @@ export const constructSystemPrompt = () => {
   - If you know the answer to a specific response, there is no need to execute additional tools.
   - If the response to a tool is required, the id can be referred to as the intended input for another execution step with the '{{}}' delimiter
 
--**Constraints**: RETURN ALL RESPONSES as a list of your intended plan in the following format:
-[
-  {
-    "id": <id>,
-    "function": {
-      "name": <tool>,
-      "arguments": <args>
-    }
-  },
-  {
-    "id": <id>,
-    "function": {
-      "name": <tool>,
-      "arguments": <args>
-    }
-  }
-  ...
-]
-
-
-Examples:
-========
-user:
-Where will the next olympics be held?
-
-assistant
-[
-  {
-    "id": "search_cdi37",
-    "function": {
-      "name": "search",
-      "arguments": {
-        "query": "Next Olympics location"
-      }
-    }
-  },
-  {
-    "id": "sendMessage_dn338",
-    "function": {
-      "name": "sendMessage",
-      "arguments": {
-        "message": "The next Olympics will be hosted at {{search_cdi37}}"
-      }
-    }
-  }
-]
-`;
+${toolConstraints}`;
 };

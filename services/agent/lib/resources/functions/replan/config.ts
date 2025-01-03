@@ -15,18 +15,18 @@ import { LambdaFunction } from "aws-cdk-lib/aws-events-targets";
 import { PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 
-interface ReceiveMessageProps {
+interface FunctionProps {
   eventBus: IEventBus;
   agentTable: Table;
 }
 
-export class ReceiveMessage extends Construct {
+export class Replan extends Construct {
   public function: NodejsFunction;
 
   constructor(
     scope: Construct,
     id: string,
-    { eventBus, agentTable }: ReceiveMessageProps
+    { eventBus, agentTable }: FunctionProps
   ) {
     super(scope, id);
 
@@ -35,18 +35,14 @@ export class ReceiveMessage extends Construct {
 
     const SLACK_SIGNING_SECRET = getEnvVariable("SLACK_SIGNING_SECRET");
 
-    this.function = new SlackCustomResource(
-      this,
-      buildResourceName("receive-message"),
-      {
-        lambdaEntry: getCdkHandlerPath(__dirname),
-        timeout: Duration.minutes(3),
-        environment: {
-          SLACK_SIGNING_SECRET,
-          EVENT_BUS: eventBus.eventBusName,
-        },
-      }
-    );
+    this.function = new SlackCustomResource(this, buildResourceName("replan"), {
+      lambdaEntry: getCdkHandlerPath(__dirname),
+      timeout: Duration.minutes(3),
+      environment: {
+        SLACK_SIGNING_SECRET,
+        EVENT_BUS: eventBus.eventBusName,
+      },
+    });
 
     eventBus.grantPutEventsTo(this.function);
     agentTable.grantReadWriteData(this.function);
@@ -54,8 +50,8 @@ export class ReceiveMessage extends Construct {
     new Rule(this, buildResourceName("on-message-received-event"), {
       eventBus,
       eventPattern: {
-        source: ["application.slackIntegration"],
-        detailType: ["receive.message"],
+        source: ["plan.end"],
+        detailType: ["agent.replan"],
       },
       targets: [new LambdaFunction(this.function)],
     });

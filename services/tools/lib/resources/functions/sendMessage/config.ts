@@ -40,6 +40,8 @@ export class SendSlackMessage extends Construct {
       }
     );
 
+    eventBus.grantPutEventsTo(this.function);
+
     new Rule(this, buildResourceName("on-send-message-event"), {
       eventBus,
       eventPattern: {

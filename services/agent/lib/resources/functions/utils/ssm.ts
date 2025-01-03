@@ -10,5 +10,9 @@ export const loadSsmValues = async (
     `api-keys/${teamId}/OPENAI_API_KEY`,
     true
   );
+  if (apiKey === undefined) {
+    throw new Error("Unable to load SSM values");
+  }
+
   process.env.OPENAI_API_KEY = apiKey;
 };
