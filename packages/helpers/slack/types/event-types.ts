@@ -1,11 +1,21 @@
 import { KnownEventFromType, SlackAction } from "@slack/bolt";
-import { BaseEvent } from "../../agent";
+import { z } from "zod";
 
 export interface SubmitApiKeyEvent extends BaseEvent {
   schema: {
     body: SlackAction;
   };
 }
+
+export const baseEventSchema = z.object({
+  core: z.object({
+    accessToken: z.string(),
+    user_id: z.string(),
+    teamId: z.string(),
+    channel: z.string().optional(),
+  }),
+});
+export type BaseEvent = z.infer<typeof baseEventSchema>;
 
 export interface RemoveApiKeyEvent extends BaseEvent {}
 

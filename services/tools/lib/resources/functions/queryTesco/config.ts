@@ -41,7 +41,10 @@ export class QueryTesco extends Construct {
       eventBus,
       eventPattern: {
         source: ["agent.brain"],
-        detailType: [`tools.${Tools.queryTesco}`],
+        detailType: [
+          `tools.${Tools.queryTesco}`,
+          `tools.functions.${Tools.queryTesco}`,
+        ],
       },
       targets: [new LambdaFunction(this.function)],
     });

@@ -1,7 +1,6 @@
-import { BasicSlackEvent, BlockAction, EnvelopedEvent } from "@slack/bolt";
+import { BlockAction, EnvelopedEvent } from "@slack/bolt";
 import { APIGatewayProxyEvent } from "aws-lambda";
 import { WorkspaceEntity } from "../../dataModel";
-
 
 export const getAccessToken = async (
   event: APIGatewayProxyEvent
@@ -42,7 +41,7 @@ export const getAccessToken = async (
       break;
 
     case "event_callback":
-      const envelopedEvent = payload as EnvelopedEvent<BasicSlackEvent>;
+      const envelopedEvent = payload as EnvelopedEvent<unknown>;
       teamId = envelopedEvent.team_id;
       break;
 

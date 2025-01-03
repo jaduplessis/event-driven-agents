@@ -1,12 +1,18 @@
 import {
-    EventBridgeClient,
-    PutEventsCommand,
-    PutEventsCommandOutput,
-    PutEventsRequestEntry,
+  EventBridgeClient,
+  PutEventsCommand,
+  PutEventsCommandOutput,
+  PutEventsRequestEntry,
 } from "@aws-sdk/client-eventbridge";
-import { getEnvVariable } from "@event-driven-agents/helpers";
+import { agentEventSchema, getEnvVariable } from "@event-driven-agents/helpers";
+import { z } from "zod";
 
 let client: EventBridgeClient | undefined;
+
+const MAXIMUM_STEPS = 5;
+const processingCheckSchema = z.object({
+  processingStep: z.number().int().min(0).max(MAXIMUM_STEPS).default(0),
+});
 
 export class EventBridgeAdapter {
   eventBus: string;
@@ -16,15 +22,24 @@ export class EventBridgeAdapter {
   }
 
   putEvent(
-    action: string,
+    source: string,
     payload: Record<string, unknown>,
     detailType: string
   ): Promise<PutEventsCommandOutput> {
+    console.log(
+      `Event being sent from ${source} with detail type ${detailType}`
+    );
     const eventTime = Date.now();
 
+    const { processingStep } = agentEventSchema.parse(payload);
+
     const event: PutEventsRequestEntry = {
-      Source: action,
-      Detail: JSON.stringify({ ...payload, eventTime }),
+      Source: source,
+      Detail: JSON.stringify({
+        ...payload,
+        processingStep: processingStep + 1,
+        eventTime,
+      }),
       DetailType: detailType,
       EventBusName: this.eventBus,
     };

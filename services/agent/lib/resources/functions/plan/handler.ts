@@ -8,9 +8,9 @@ import {
   ToolEvent,
 } from "@event-driven-agents/helpers";
 import { EventBridgeEvent } from "aws-lambda";
-import { MessageEntity } from "../../dataModel";
 import { generateTasksList } from "../utils/generateTasksList";
 import { loadSsmValues } from "../utils/ssm";
+import { processSlackMessage } from "./message";
 import { constructSystemPrompt } from "./system";
 
 const ssm = new SSMClient({ region: getRegion() });
@@ -20,42 +20,25 @@ export const handler = async (
   event: EventBridgeEvent<"agent.plan", MessageEvent>
 ) => {
   const { core } = event.detail;
-  const { message } = event.detail.schema;
-
   await loadSsmValues(ssm, core.teamId);
 
-  if (message === undefined || message.text === undefined) {
+  let slackMessageDetails;
+  try {
+    slackMessageDetails = await processSlackMessage(event);
+  } catch (error) {
+    console.error(error);
     return;
   }
-  const { text, channel, ts, thread_ts } = message;
-
-  if (thread_ts !== undefined) {
-    return;
-  }
-
-  const messageEntity = await MessageEntity.get({
-    PK: ts,
-    SK: "ROOT",
-  });
-
-  if (messageEntity.Item) {
-    return;
-  } else {
-    await MessageEntity.update({
-      messageTs: ts,
-      teamId: core.teamId,
-    });
-  }
+  const { text, channel } = slackMessageDetails;
 
   const systemPrompt = constructSystemPrompt();
-  const humanPrompt = text;
   const tools = [sendMessageDefinition, queryTescoDefinition];
 
   console.log(`Tools: ${JSON.stringify(tools, null, 2)}`);
 
   const toolsList = await generateTasksList({
     systemPrompt,
-    humanPrompt,
+    humanPrompt: text,
     tools,
   });
 
@@ -64,17 +47,20 @@ export const handler = async (
   );
 
   const [currentTool, ...followingTools] = toolsList;
-
   const eventDetail: ToolEvent = {
+    ...event.detail,
     core: {
       ...core,
       channel,
     },
+    processingStep: 0,
     message: text,
-    previousTools: [],
-    planResults: [],
-    currentTool,
-    followingTools,
+    toolDetails: {
+      previousTools: [],
+      planResults: [],
+      currentTool,
+      followingTools,
+    },
   };
 
   await eventBridge.putEvent(

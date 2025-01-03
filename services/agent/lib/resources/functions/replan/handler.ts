@@ -19,19 +19,15 @@ const MAX_STEPS = 5;
 export const handler = async (
   event: EventBridgeEvent<"agent.replan", ToolEvent>
 ) => {
-  const { core, message } = event.detail;
-
-  if (event.detail.previousTools.length >= MAX_STEPS) {
-    console.log("Max steps reached");
-    return;
-  }
+  const { core, message, toolDetails } = event.detail;
+  const { previousTools, planResults } = toolDetails;
 
   await loadSsmValues(ssm, core.teamId);
 
   const systemPrompt = constructSystemPrompt({
     input: message,
-    plan: JSON.stringify(event.detail.previousTools, null, 2),
-    planResults: JSON.stringify(event.detail.planResults, null, 2),
+    plan: JSON.stringify(previousTools, null, 2),
+    planResults: JSON.stringify(planResults, null, 2),
   });
   const tools = [sendMessageDefinition, queryTescoDefinition];
 
@@ -50,8 +46,12 @@ export const handler = async (
 
   const eventDetail: ToolEvent = {
     ...event.detail,
-    currentTool,
-    followingTools,
+    toolDetails: {
+      planResults,
+      previousTools,
+      currentTool,
+      followingTools,
+    },
   };
 
   console.log(`Event Detail: ${JSON.stringify(eventDetail, null, 2)}`);

@@ -6,10 +6,11 @@
     "@aws-sdk/client-dynamodb": "^3.540.0",
     "@aws-sdk/client-eventbridge": "^3.429.0",
     "@aws-sdk/lib-dynamodb": "^3.540.0",
-    "@slack/bolt": "^3.14.0",
     "@event-driven-agents/helpers": "workspace:^",
+    "@slack/bolt": "^3.14.0",
     "dynamodb-toolbox": "^0.9.2",
-    "ulid": "^2.3.0"
+    "ulid": "^2.3.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/aws-lambda": "8.10.130",
