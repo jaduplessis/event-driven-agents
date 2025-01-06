@@ -4,7 +4,12 @@ import { Construct } from "constructs";
 import { DynamoDBConstruct } from "@event-driven-agents/cdk-constructs";
 import { buildResourceName, eventBusName } from "@event-driven-agents/helpers";
 import { EventBus } from "aws-cdk-lib/aws-events";
-import { Plan, Replan } from "./resources/functions";
+import {
+  Plan,
+  QueryTesco,
+  Replan,
+  SendSlackMessage,
+} from "./resources/functions";
 
 export class AgentStack extends Stack {
   constructor(scope: Construct, id: string) {
@@ -28,6 +33,14 @@ export class AgentStack extends Stack {
     new Replan(this, "replan", {
       eventBus,
       agentTable: agentTable.table,
+    });
+
+    new QueryTesco(this, "queryTesco", {
+      eventBus,
+    });
+
+    new SendSlackMessage(this, "sendSlackMessage", {
+      eventBus,
     });
   }
 }
