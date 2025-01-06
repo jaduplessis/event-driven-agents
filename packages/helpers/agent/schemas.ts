@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { baseEventSchema } from "../slack";
 
 /*
 Tool schemas are divided into 3 sets:
@@ -15,6 +16,14 @@ This is the event object that is sent to the tool. It is based off of the ToolRe
 extended to contain additional information that the tool may need to know about the event.
 */
 
+const MAXIMUM_STEPS = 5;
+
+export const agentEventSchema = baseEventSchema.extend({
+  processingStep: z.number().int().min(0).max(MAXIMUM_STEPS),
+  message: z.string(),
+});
+export type AgentEvent = z.infer<typeof agentEventSchema>;
+
 export const toolRequestSchema = z.object({
   id: z.string(),
   function: z.object({
@@ -27,21 +36,12 @@ export type ToolRequest = z.infer<typeof toolRequestSchema>;
 export const toolsListSchema = z.array(toolRequestSchema);
 export type ToolsList = z.infer<typeof toolsListSchema>;
 
-export const baseEventSchema = z.object({
-  core: z.object({
-    accessToken: z.string(),
-    user_id: z.string(),
-    teamId: z.string(),
-    channel: z.string().optional(),
+export const toolEventSchema = agentEventSchema.extend({
+  toolDetails: z.object({
+    planResults: z.array(z.string()),
+    previousTools: z.array(toolRequestSchema),
+    currentTool: toolRequestSchema,
+    followingTools: z.array(toolRequestSchema),
   }),
-});
-export type BaseEvent = z.infer<typeof baseEventSchema>;
-
-export const toolEventSchema = baseEventSchema.extend({
-  message: z.string(),
-  planResults: z.array(z.string()),
-  previousTools: z.array(toolRequestSchema),
-  currentTool: toolRequestSchema,
-  followingTools: z.array(toolRequestSchema),
 });
 export type ToolEvent = z.infer<typeof toolEventSchema>;

@@ -9,7 +9,7 @@ export const handler = async (
   event: EventBridgeEvent<`tools.*`, ToolEvent>
 ) => {
   const { previousTools, currentTool, followingTools, planResults } =
-    event.detail;
+    event.detail.toolDetails;
 
   const { query } = queryTescoSchema.parse(currentTool.function.arguments);
 
@@ -27,10 +27,12 @@ export const handler = async (
 
   const eventDetail: ToolEvent = {
     ...event.detail,
-    planResults: updatedPlanResults,
-    previousTools: pastTools,
-    currentTool: nextTool,
-    followingTools: remainingTools,
+    toolDetails: {
+      planResults: updatedPlanResults,
+      previousTools: pastTools,
+      currentTool: nextTool,
+      followingTools: remainingTools,
+    },
   };
 
   let source = "";

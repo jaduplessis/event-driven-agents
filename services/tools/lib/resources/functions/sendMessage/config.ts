@@ -46,7 +46,10 @@ export class SendSlackMessage extends Construct {
       eventBus,
       eventPattern: {
         source: ["agent.brain"],
-        detailType: [`tools.${Tools.sendMessage}`],
+        detailType: [
+          `tools.${Tools.sendMessage}`,
+          `tools.functions.${Tools.sendMessage}`,
+        ],
       },
       targets: [new LambdaFunction(this.function)],
     });

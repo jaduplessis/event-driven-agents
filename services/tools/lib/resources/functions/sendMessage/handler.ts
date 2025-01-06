@@ -5,7 +5,8 @@ import { EventBridgeEvent } from "aws-lambda";
 export const handler = async (
   event: EventBridgeEvent<`tools.*`, ToolEvent>
 ) => {
-  const { core, currentTool } = event.detail;
+  const { core } = event.detail;
+  const { currentTool } = event.detail.toolDetails;
   const { accessToken, channel } = core;
   if (channel === undefined) {
     throw new Error("Channel is required to send a message");
