@@ -5,14 +5,8 @@ import {
   PutEventsRequestEntry,
 } from "@aws-sdk/client-eventbridge";
 import { agentEventSchema, getEnvVariable } from "@event-driven-agents/helpers";
-import { z } from "zod";
 
 let client: EventBridgeClient | undefined;
-
-const MAXIMUM_STEPS = 5;
-const processingCheckSchema = z.object({
-  processingStep: z.number().int().min(0).max(MAXIMUM_STEPS).default(0),
-});
 
 export class EventBridgeAdapter {
   eventBus: string;
