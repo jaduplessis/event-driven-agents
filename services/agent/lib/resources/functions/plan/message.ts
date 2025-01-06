@@ -13,15 +13,14 @@ export const processSlackMessage = async (
   }
   const { text, ts, thread_ts, channel } = message;
 
-  if (thread_ts !== undefined) {
-    throw new Error("Threaded messages are not supported");
-  }
-
   try {
-    await getMessage(ts);
+    await getMessage({ thread_ts, message_ts: ts });
     throw new Error("Message already processed");
   } catch (error) {
-    createMessage({ ts, teamId: core.teamId, channel, text, thread_ts });
+    createMessage({
+      messageKeys: { thread_ts, message_ts: ts },
+      message: { teamId: core.teamId, channel, text },
+    });
   }
 
   return { text, channel, ts };

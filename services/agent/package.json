@@ -25,6 +25,7 @@
     "langchain": "^0.2.4",
     "openai": "^4.77.0",
     "puppeteer": "^23.11.1",
+    "ulid": "^2.3.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {
