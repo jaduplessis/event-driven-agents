@@ -17,11 +17,11 @@ export const processSlackMessage = async (
     await getMessage({ thread_ts, message_ts: ts });
     throw new Error("Message already processed");
   } catch (error) {
-    createMessage({
-      messageKeys: { thread_ts, message_ts: ts },
-      message: { teamId: core.teamId, channel, text },
-    });
+    console.log("Message not found. New message to process");
   }
 
-  return { text, channel, ts };
+  return await createMessage({
+    messageKeys: { thread_ts, message_ts: ts },
+    message: { teamId: core.teamId, channel, text },
+  });
 };

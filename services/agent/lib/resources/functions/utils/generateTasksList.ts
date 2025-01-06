@@ -1,18 +1,19 @@
 import { getEnvVariable } from "@event-driven-agents/helpers";
 import OpenAI from "openai";
-import { ChatCompletionTool } from "openai/resources";
+import {
+  ChatCompletionMessageParam,
+  ChatCompletionTool,
+} from "openai/resources";
 import { ToolsList, toolsListSchema } from "../../dataModel";
 import { parseArguments } from "./parseArguments";
 
 interface InvokeParams {
-  systemPrompt: string;
-  humanPrompt: string;
+  messages: ChatCompletionMessageParam[];
   tools: ChatCompletionTool[];
 }
 
 export const generateTasksList = async ({
-  systemPrompt,
-  humanPrompt,
+  messages,
   tools,
 }: InvokeParams): Promise<ToolsList> => {
   const openai = new OpenAI({
@@ -21,16 +22,7 @@ export const generateTasksList = async ({
 
   const response = await openai.chat.completions.create({
     model: "gpt-4o-2024-08-06",
-    messages: [
-      {
-        role: "system",
-        content: systemPrompt,
-      },
-      {
-        role: "user",
-        content: humanPrompt,
-      },
-    ],
+    messages,
     tools,
   });
 

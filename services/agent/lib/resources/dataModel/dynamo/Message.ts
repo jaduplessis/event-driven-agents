@@ -2,6 +2,7 @@ import type { InputItem, TransformedItem, ValidItem } from "dynamodb-toolbox";
 import {
   Entity,
   GetItemCommand,
+  QueryCommand,
   schema,
   string,
   UpdateItemCommand,
@@ -90,4 +91,26 @@ export const createMessage = async ({
   }
 
   return Attributes;
+};
+
+export const getThreadMessages = async (
+  thread_ts: string
+): Promise<MessageTypeInput[]> => {
+  const query = {
+    partition: `THREAD#${thread_ts}`,
+  };
+
+  const { Items } = await AgentTable.build(QueryCommand)
+    .query(query)
+    .entities(MessageEntity)
+    .send();
+
+  if (!Items) {
+    throw new Error("No messages found");
+  }
+
+  return Items.map((item) => ({
+    ...item,
+    entity: "MessageItem",
+  }));
 };
