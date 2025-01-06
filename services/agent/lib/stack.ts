@@ -37,6 +37,7 @@ export class AgentStack extends Stack {
 
     new QueryTesco(this, "queryTesco", {
       eventBus,
+      agentTable: agentTable.table,
     });
 
     new SendSlackMessage(this, "sendSlackMessage", {

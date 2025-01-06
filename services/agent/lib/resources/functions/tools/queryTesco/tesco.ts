@@ -1,14 +1,11 @@
 import { getEnvVariable } from "@event-driven-agents/helpers";
-import {
-  TescoQuerySchema,
-  TescoQueryType,
-} from "@event-driven-agents/helpers/types";
+import { TescoQuerySchema } from "@event-driven-agents/helpers/types";
 import axios from "axios";
 
 export const queryTesco = async (
   query: string,
   page: number = 1
-): Promise<TescoQueryType> => {
+): Promise<string> => {
   const config = {
     method: "post",
     maxBodyLength: Infinity,
@@ -71,7 +68,8 @@ export const queryTesco = async (
 
     const data = await response.data;
 
-    return TescoQuerySchema.parse(data);
+    const results = TescoQuerySchema.parse(data);
+    return JSON.stringify(results);
   } catch (error) {
     console.error("Error fetching data:", error);
     throw error;

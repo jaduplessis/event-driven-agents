@@ -9,9 +9,9 @@ import {
 import { AgentTable } from "./Table";
 
 export const messageSchema = schema({
-  ts: string().key(),
+  thread_ts: string().key(),
+  message_ts: string().key().default("ROOT"),
   teamId: string(),
-  thread_ts: string().optional(),
   channel: string(),
   text: string(),
 });
@@ -20,9 +20,9 @@ export const MessageEntity = new Entity({
   name: "MessageItem",
   table: AgentTable,
   schema: messageSchema,
-  computeKey: ({ ts }) => ({
-    PK: `MESSAGE_TS#${ts}`,
-    SK: "ROOT",
+  computeKey: ({ thread_ts, message_ts }) => ({
+    PK: `THREAD#${thread_ts}`,
+    SK: `MESSAGE#${message_ts}`,
   }),
 });
 
@@ -30,8 +30,30 @@ export type MessageTypeInput = InputItem<typeof MessageEntity>;
 export type MessageTypeValid = ValidItem<typeof MessageEntity>;
 export type MessageTypeTransformed = TransformedItem<typeof MessageEntity>;
 
-export const getMessage = async (ts: string): Promise<MessageTypeInput> => {
-  const { Item } = await MessageEntity.build(GetItemCommand).key({ ts }).send();
+interface RawMessageKeys {
+  thread_ts: string | undefined;
+  message_ts: string;
+}
+
+const buildKeys = (messageKeys: RawMessageKeys) => {
+  const { thread_ts, message_ts } = messageKeys;
+  if (thread_ts === undefined) {
+    return {
+      thread_ts: message_ts,
+      message_ts: "ROOT",
+    };
+  }
+  return { thread_ts, message_ts };
+};
+
+export const getMessage = async (
+  messageKeys: RawMessageKeys
+): Promise<MessageTypeInput> => {
+  const { thread_ts, message_ts } = buildKeys(messageKeys);
+
+  const { Item } = await MessageEntity.build(GetItemCommand)
+    .key({ thread_ts, message_ts })
+    .send();
 
   if (!Item) {
     throw new Error("Message not found");
@@ -39,11 +61,27 @@ export const getMessage = async (ts: string): Promise<MessageTypeInput> => {
   return Item;
 };
 
-export const createMessage = async (
-  message: MessageTypeInput
-): Promise<MessageTypeInput> => {
+interface CreateMessageProps {
+  messageKeys: RawMessageKeys;
+  message: {
+    teamId: string;
+    channel: string;
+    text: string;
+  };
+}
+
+export const createMessage = async ({
+  messageKeys,
+  message,
+}: CreateMessageProps): Promise<MessageTypeInput> => {
+  const { thread_ts, message_ts } = buildKeys(messageKeys);
+
   const { Attributes } = await MessageEntity.build(UpdateItemCommand)
-    .item(message)
+    .item({
+      ...message,
+      thread_ts,
+      message_ts,
+    })
     .options({ returnValues: "ALL_NEW" })
     .send();
 
