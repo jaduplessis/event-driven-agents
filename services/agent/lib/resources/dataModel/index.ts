@@ -1,3 +1,2 @@
-export * from "./Settings";
-export * from "./Table";
-export * from "./Message";
+export * from "./dynamo";
+export * from "./tools";

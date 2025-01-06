@@ -1,4 +1,4 @@
-import { toolConstraints } from "../prompts/toolConstraints";
+import { toolConstraints } from "../../prompts";
 
 interface ReplanSystemPromptParams {
   input: string;

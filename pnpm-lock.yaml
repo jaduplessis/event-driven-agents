@@ -265,10 +265,13 @@ importers:
         version: 0.8.5(@aws-sdk/client-dynamodb@3.716.0)(@aws-sdk/lib-dynamodb@3.716.0)
       langchain:
         specifier: ^0.2.4
-        version: 0.2.20(@aws-sdk/client-s3@3.717.0)(axios@1.7.9)(openai@4.77.0)
+        version: 0.2.20(@aws-sdk/client-s3@3.717.0)(axios@1.7.9)(openai@4.77.0)(puppeteer@23.11.1)
       openai:
         specifier: ^4.77.0
         version: 4.77.0(zod@3.24.1)
+      puppeteer:
+        specifier: ^23.11.1
+        version: 23.11.1(typescript@5.3.2)
       zod:
         specifier: ^3.24.1
         version: 3.24.1
@@ -8530,7 +8533,7 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /langchain@0.2.20(@aws-sdk/client-s3@3.717.0)(axios@1.7.9)(openai@4.77.0):
+  /langchain@0.2.20(@aws-sdk/client-s3@3.717.0)(axios@1.7.9)(openai@4.77.0)(puppeteer@23.11.1):
     resolution: {integrity: sha512-tbels6Rr524iMM3VOQ4aTGnEOOjAA1BQuBR8u/8gJ2yT48lMtIQRAN32Y4KVjKK+hEWxHHlmLBrtgLpTphFjNA==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -8722,6 +8725,7 @@ packages:
       langsmith: 0.1.68(openai@4.77.0)
       openapi-types: 12.1.3
       p-retry: 4.6.2
+      puppeteer: 23.11.1(typescript@5.3.2)
       uuid: 10.0.0
       yaml: 2.7.0
       zod: 3.24.1

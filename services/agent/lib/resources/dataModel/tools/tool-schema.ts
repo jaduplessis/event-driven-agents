@@ -1,5 +1,5 @@
+import { agentEventSchema } from "@event-driven-agents/helpers";
 import { z } from "zod";
-import { baseEventSchema } from "../slack";
 
 /*
 Tool schemas are divided into 3 sets:
@@ -16,13 +16,10 @@ This is the event object that is sent to the tool. It is based off of the ToolRe
 extended to contain additional information that the tool may need to know about the event.
 */
 
-const MAXIMUM_STEPS = 5;
+export const toolsEnumSchema = z.enum(["sendMessage", "queryTesco"]);
 
-export const agentEventSchema = baseEventSchema.extend({
-  processingStep: z.number().int().min(0).max(MAXIMUM_STEPS),
-  message: z.string(),
-});
-export type AgentEvent = z.infer<typeof agentEventSchema>;
+export type ToolsEnum = z.infer<typeof toolsEnumSchema>;
+export const Tools = toolsEnumSchema.Values;
 
 export const toolRequestSchema = z.object({
   id: z.string(),
