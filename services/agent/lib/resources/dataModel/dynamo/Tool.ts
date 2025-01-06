@@ -1,7 +1,13 @@
-import type { InputItem, TransformedItem, ValidItem } from "dynamodb-toolbox";
+import type {
+  InputItem,
+  Query,
+  TransformedItem,
+  ValidItem,
+} from "dynamodb-toolbox";
 import {
   Entity,
   GetItemCommand,
+  QueryCommand,
   schema,
   string,
   UpdateItemCommand,
@@ -68,4 +74,23 @@ export const createToolUse = async (
   }
 
   return Attributes;
+};
+
+export const getThreadToolUse = async (
+  thread_ts: string
+): Promise<ToolTypeInput[]> => {
+  const query: Query<typeof AgentTable> = {
+    partition: `THREAD#${thread_ts}`,
+  };
+
+  const { Items } = await AgentTable.build(QueryCommand)
+    .query(query)
+    .entities(ToolEntity)
+    .send();
+
+  if (!Items) {
+    throw new Error("No tools found");
+  }
+
+  return Items;
 };
