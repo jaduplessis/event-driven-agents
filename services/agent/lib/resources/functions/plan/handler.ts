@@ -1,13 +1,12 @@
 import { SSMClient } from "@aws-sdk/client-ssm";
 import { EventBridgeAdapter } from "@event-driven-agents/adapters";
+import { getRegion, MessageEvent } from "@event-driven-agents/helpers";
+import { EventBridgeEvent } from "aws-lambda";
 import {
-  getRegion,
-  MessageEvent,
   queryTescoDefinition,
   sendMessageDefinition,
   ToolEvent,
-} from "@event-driven-agents/helpers";
-import { EventBridgeEvent } from "aws-lambda";
+} from "../../dataModel";
 import { generateTasksList } from "../utils/generateTasksList";
 import { loadSsmValues } from "../utils/ssm";
 import { processSlackMessage } from "./message";
@@ -29,7 +28,7 @@ export const handler = async (
     console.error(error);
     return;
   }
-  const { text, channel } = slackMessageDetails;
+  const { text, channel, ts } = slackMessageDetails;
 
   const systemPrompt = constructSystemPrompt();
   const tools = [sendMessageDefinition, queryTescoDefinition];
@@ -51,6 +50,7 @@ export const handler = async (
     ...event.detail,
     core: {
       ...core,
+      ts,
       channel,
     },
     processingStep: 0,

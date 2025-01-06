@@ -13,6 +13,7 @@ export const baseEventSchema = z.object({
     user_id: z.string(),
     teamId: z.string(),
     channel: z.string().optional(),
+    ts: z.string().optional(),
   }),
 });
 export type BaseEvent = z.infer<typeof baseEventSchema>;

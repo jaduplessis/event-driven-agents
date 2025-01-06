@@ -227,6 +227,9 @@ importers:
       '@aws-sdk/client-ssm':
         specifier: ^3.556.0
         version: 3.716.0
+      '@aws-sdk/lib-dynamodb':
+        specifier: ^3.540.0
+        version: 3.716.0(@aws-sdk/client-dynamodb@3.716.0)
       '@event-driven-agents/adapters':
         specifier: workspace:*
         version: link:../../packages/adapters
@@ -261,8 +264,8 @@ importers:
         specifier: ^16.3.1
         version: 16.3.1
       dynamodb-toolbox:
-        specifier: ^0.8.5
-        version: 0.8.5(@aws-sdk/client-dynamodb@3.716.0)(@aws-sdk/lib-dynamodb@3.716.0)
+        specifier: ^1.14.5
+        version: 1.14.5(@aws-sdk/client-dynamodb@3.716.0)(@aws-sdk/lib-dynamodb@3.716.0)
       langchain:
         specifier: ^0.2.4
         version: 0.2.20(@aws-sdk/client-s3@3.717.0)(axios@1.7.9)(openai@4.77.0)(puppeteer@23.11.1)
@@ -333,6 +336,9 @@ importers:
       '@aws-sdk/client-ssm':
         specifier: ^3.556.0
         version: 3.716.0
+      '@aws-sdk/lib-dynamodb':
+        specifier: ^3.540.0
+        version: 3.716.0(@aws-sdk/client-dynamodb@3.716.0)
       '@event-driven-agents/adapters':
         specifier: workspace:*
         version: link:../../packages/adapters
@@ -367,8 +373,8 @@ importers:
         specifier: ^16.3.1
         version: 16.3.1
       dynamodb-toolbox:
-        specifier: ^0.8.5
-        version: 0.8.5(@aws-sdk/client-dynamodb@3.716.0)(@aws-sdk/lib-dynamodb@3.716.0)
+        specifier: ^1.14.5
+        version: 1.14.5(@aws-sdk/client-dynamodb@3.716.0)(@aws-sdk/lib-dynamodb@3.716.0)
     devDependencies:
       '@slack/types':
         specifier: ^2.11.0
@@ -6469,19 +6475,6 @@ packages:
     resolution: {integrity: sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==}
     dev: true
 
-  /dynamodb-toolbox@0.8.5(@aws-sdk/client-dynamodb@3.716.0)(@aws-sdk/lib-dynamodb@3.716.0):
-    resolution: {integrity: sha512-cCoZ19SX16tcd14I/V1Eh3VNthvk7xneSJkcsUsDiLMuP+97WGH9Q1SdfAn8rRjOXS71noguZL3hBz9QFI5mRw==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      '@aws-sdk/client-dynamodb': ^3.0.0
-      '@aws-sdk/lib-dynamodb': ^3.0.0
-    dependencies:
-      '@aws-sdk/client-dynamodb': 3.716.0
-      '@aws-sdk/lib-dynamodb': 3.716.0(@aws-sdk/client-dynamodb@3.716.0)
-      deep-copy: 1.4.2
-      ts-toolbelt: 9.6.0
-    dev: false
-
   /dynamodb-toolbox@0.9.5(@aws-sdk/client-dynamodb@3.716.0)(@aws-sdk/lib-dynamodb@3.716.0):
     resolution: {integrity: sha512-Zckk2fKZoH5nKdxxB0vWuxSfS8pG4ofojKq2seNu1oFSSyndpvOTcACWalWIYl7h6WZ6prgJnFH/SglskQ+iYA==}
     engines: {node: '>=14.0.0'}
@@ -6493,6 +6486,18 @@ packages:
       '@aws-sdk/lib-dynamodb': 3.716.0(@aws-sdk/client-dynamodb@3.716.0)
       deep-copy: 1.4.2
       ts-toolbelt: 9.6.0
+    dev: false
+
+  /dynamodb-toolbox@1.14.5(@aws-sdk/client-dynamodb@3.716.0)(@aws-sdk/lib-dynamodb@3.716.0):
+    resolution: {integrity: sha512-K0BXuIIh8ZF4zaNmHWWfWBxheMZjzZKzb7CvYTLayH+fFgmHMhv355Sj9vrqC0Jp3wlZ+9GWR/jmmAqq6NM0NQ==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@aws-sdk/client-dynamodb': ^3.0.0
+      '@aws-sdk/lib-dynamodb': ^3.0.0
+    dependencies:
+      '@aws-sdk/client-dynamodb': 3.716.0
+      '@aws-sdk/lib-dynamodb': 3.716.0(@aws-sdk/client-dynamodb@3.716.0)
+      hotscript: 1.0.13
     dev: false
 
   /eastasianwidth@0.2.0:
@@ -7716,6 +7721,10 @@ packages:
     dependencies:
       lru-cache: 10.4.3
     dev: true
+
+  /hotscript@1.0.13:
+    resolution: {integrity: sha512-C++tTF1GqkGYecL+2S1wJTfoH6APGAsbb7PAWQ3iVIwgG/EFseAfEVOKFgAFq4yK3+6j1EjUD4UQ9dRJHX/sSQ==}
+    dev: false
 
   /html-escaper@2.0.2:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}

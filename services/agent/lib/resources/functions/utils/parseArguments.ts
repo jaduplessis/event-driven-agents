@@ -1,5 +1,5 @@
-import { ToolsList } from "@event-driven-agents/helpers";
 import { ChatCompletionMessageToolCall } from "openai/resources";
+import { ToolsList } from "../../dataModel";
 
 export const parseArguments = (
   toolCalls: ChatCompletionMessageToolCall[]

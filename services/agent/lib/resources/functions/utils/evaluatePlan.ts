@@ -1,11 +1,11 @@
 import {
   getEnvVariable,
-  ToolsList,
-  toolsListSchema,
+  
 } from "@event-driven-agents/helpers";
 import OpenAI from "openai";
 import { ChatCompletionTool } from "openai/resources";
 import { parseArguments } from "./parseArguments";
+import { ToolsList, toolsListSchema } from "../../dataModel";
 
 interface InvokeParams {
   systemPrompt: string;
