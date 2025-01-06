@@ -1,4 +1,5 @@
 import { toolConstraints } from "../../prompts";
+import { selfAwareGuideline } from "../../prompts/selfAwareGuideline";
 
 interface ReplanSystemPromptParams {
   input: string | undefined;
@@ -26,7 +27,9 @@ ${planResults}
 
 Update your plan accordingly. If no more steps are needed and you can return to the user, then respond with that and use the 'sendMessage' function.
 
-If you are unable to complete the plan with the available tools, then send a message to the user with a summary of the current state of the plan and the next steps the user would have to take.
+If you are unable to complete the plan with the available tools, then send a message to the user with a summary of the current state of the plan and whats been achieved.
+
+${selfAwareGuideline}
 
 ${toolConstraints}`;
 };

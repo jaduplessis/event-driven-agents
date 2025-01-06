@@ -6,9 +6,10 @@ import { sendMessageSchema, ToolEvent } from "../../../dataModel";
 export const handler = async (
   event: EventBridgeEvent<`tools.*`, ToolEvent>
 ) => {
-  const { core } = event.detail;
+  const { core, thread_ts } = event.detail;
   const { currentTool } = event.detail.toolDetails;
-  const { accessToken, channel, ts } = core;
+  const { accessToken, channel } = core;
+
   if (channel === undefined) {
     throw new Error("Channel is required to send a message");
   }
@@ -19,7 +20,7 @@ export const handler = async (
   await app.client.chat.postMessage({
     token: accessToken,
     channel,
-    thread_ts: ts,
+    thread_ts,
     blocks: [
       {
         type: "section",

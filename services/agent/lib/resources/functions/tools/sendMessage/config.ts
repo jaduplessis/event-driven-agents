@@ -45,7 +45,7 @@ export class SendSlackMessage extends Construct {
     new Rule(this, buildResourceName("on-send-message-event"), {
       eventBus,
       eventPattern: {
-        source: ["agent.brain"],
+        source: ["agent.brain", "tools"],
         detailType: [
           `tools.${Tools.sendMessage}`,
           `tools.functions.${Tools.sendMessage}`,

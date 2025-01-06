@@ -50,10 +50,10 @@ export const handler = async (
     ...event.detail,
     core: {
       ...core,
-      ts,
       channel,
     },
     processingStep: 0,
+    thread_ts: ts,
     message: text,
     toolDetails: {
       previousTools: [],
