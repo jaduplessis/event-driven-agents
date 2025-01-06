@@ -1,13 +1,14 @@
 import { SlackAppAdapter } from "@event-driven-agents/adapters";
-import { sendMessageSchema, ToolEvent } from "@event-driven-agents/helpers";
+
 import { EventBridgeEvent } from "aws-lambda";
+import { sendMessageSchema, ToolEvent } from "../../../dataModel";
 
 export const handler = async (
   event: EventBridgeEvent<`tools.*`, ToolEvent>
 ) => {
   const { core } = event.detail;
   const { currentTool } = event.detail.toolDetails;
-  const { accessToken, channel } = core;
+  const { accessToken, channel, ts } = core;
   if (channel === undefined) {
     throw new Error("Channel is required to send a message");
   }
@@ -18,6 +19,7 @@ export const handler = async (
   await app.client.chat.postMessage({
     token: accessToken,
     channel,
+    thread_ts: ts,
     blocks: [
       {
         type: "section",

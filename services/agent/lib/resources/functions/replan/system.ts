@@ -1,7 +1,7 @@
 import { toolConstraints } from "../../prompts";
 
 interface ReplanSystemPromptParams {
-  input: string;
+  input: string | undefined;
   plan: string;
   planResults: string;
 }

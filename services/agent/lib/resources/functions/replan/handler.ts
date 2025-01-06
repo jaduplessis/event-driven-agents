@@ -1,12 +1,12 @@
 import { SSMClient } from "@aws-sdk/client-ssm";
 import { EventBridgeAdapter } from "@event-driven-agents/adapters";
+import { getRegion } from "@event-driven-agents/helpers";
+import { EventBridgeEvent } from "aws-lambda";
 import {
-  getRegion,
+  ToolEvent,
   queryTescoDefinition,
   sendMessageDefinition,
-  ToolEvent,
-} from "@event-driven-agents/helpers";
-import { EventBridgeEvent } from "aws-lambda";
+} from "../../dataModel";
 import { evaluatePlan } from "../utils/evaluatePlan";
 import { loadSsmValues } from "../utils/ssm";
 import { constructSystemPrompt } from "./system";

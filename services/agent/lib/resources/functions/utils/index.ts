@@ -1,1 +1,2 @@
-export { getSettingsFromTeamId } from "./getSettingsFromTeamId";
+// export { getSettingsFromTeamId } from "./getSettingsFromTeamId";
+export {};

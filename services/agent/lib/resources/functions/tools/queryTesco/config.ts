@@ -5,12 +5,12 @@ import {
   buildResourceName,
   getCdkHandlerPath,
   getEnvVariable,
-  Tools,
 } from "@event-driven-agents/helpers";
 import { Duration } from "aws-cdk-lib";
 import { IEventBus, Rule } from "aws-cdk-lib/aws-events";
 import { LambdaFunction } from "aws-cdk-lib/aws-events-targets";
 import { Construct } from "constructs";
+import { Tools } from "../../../dataModel";
 
 interface FunctionProps {
   eventBus: IEventBus;

@@ -1,6 +1,6 @@
 import { EventBridgeAdapter } from "@event-driven-agents/adapters";
-import { queryTescoSchema, ToolEvent } from "@event-driven-agents/helpers";
 import { EventBridgeEvent } from "aws-lambda";
+import { queryTescoSchema, ToolEvent } from "../../../dataModel";
 import { queryTesco } from "./tesco";
 
 const eventBridge = new EventBridgeAdapter();

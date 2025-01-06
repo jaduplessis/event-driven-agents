@@ -1,21 +1,41 @@
-import { DynamoDB } from "@aws-sdk/client-dynamodb";
 import { Table } from "dynamodb-toolbox";
 
-import { buildResourceName, getRegion } from "@event-driven-agents/helpers";
+import { buildResourceName } from "@event-driven-agents/helpers";
 
-const documentClient = new DynamoDB({
-  region: getRegion(),
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+
+const dynamoDBClient = new DynamoDBClient();
+
+const documentClient = DynamoDBDocumentClient.from(dynamoDBClient, {
+  marshallOptions: {
+    removeUndefinedValues: true,
+    convertEmptyValues: false,
+  },
 });
 
 export const AgentTable = new Table({
+  documentClient,
   name: buildResourceName("agent-table"),
-  partitionKey: "PK",
-  sortKey: "SK",
+  partitionKey: {
+    name: "PK",
+    type: "string",
+  },
+  sortKey: {
+    name: "SK",
+    type: "string",
+  },
   indexes: {
     GSI1: {
-      partitionKey: "GSI1PK",
-      sortKey: "GSI1SK",
+      type: "global",
+      partitionKey: {
+        name: "GSI1PK",
+        type: "string",
+      },
+      sortKey: {
+        name: "GSI1SK",
+        type: "string",
+      },
     },
   },
-  DocumentClient: documentClient,
 } as const);
