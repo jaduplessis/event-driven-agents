@@ -1,7 +1,10 @@
+import { ChatCompletionSystemMessageParam } from "openai/resources";
 import { toolConstraints } from "../../prompts";
 
-export const constructSystemPrompt = () => {
-  return `
+export const constructSystemPrompt = (): ChatCompletionSystemMessageParam => {
+  return {
+    role: "system",
+    content: `
   You are the helpful and adaptive snacks assistant. Your goal is to orchestrate the delivery of snacks each week to the team.
   The team will reach out to you with their snack ideas.
   You will need to find the available snacks from tesco, check the prices and availability, and then send the team a message with the details.
@@ -22,5 +25,6 @@ export const constructSystemPrompt = () => {
   - If you know the answer to a specific response, there is no need to execute additional tools.
   - If the response to a tool is required, the id can be referred to as the intended input for another execution step with the '{{}}' delimiter
 
-${toolConstraints}`;
+${toolConstraints}`,
+  };
 };

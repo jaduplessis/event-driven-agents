@@ -9,8 +9,8 @@ import {
 } from "../../dataModel";
 import { generateTasksList } from "../utils/generateTasksList";
 import { loadSsmValues } from "../utils/ssm";
-import { processSlackMessage } from "./message";
-import { constructSystemPrompt } from "./system";
+import { constructMessages } from "./messages";
+import { processSlackMessage } from "./slack";
 
 const ssm = new SSMClient({ region: getRegion() });
 const eventBridge = new EventBridgeAdapter();
@@ -18,56 +18,50 @@ const eventBridge = new EventBridgeAdapter();
 export const handler = async (
   event: EventBridgeEvent<"agent.plan", MessageEvent>
 ) => {
-  const { core } = event.detail;
-  await loadSsmValues(ssm, core.teamId);
-
-  let slackMessageDetails;
   try {
-    slackMessageDetails = await processSlackMessage(event);
+    const { core } = event.detail;
+    await loadSsmValues(ssm, core.teamId);
+
+    const { text, channel, thread_ts } = await processSlackMessage(event);
+
+    const messages = await constructMessages(thread_ts);
+    const tools = [sendMessageDefinition, queryTescoDefinition];
+
+    const toolsList = await generateTasksList({
+      messages,
+      tools,
+    });
+
+    console.log(
+      `Plan to run tools and configurations: ${JSON.stringify(toolsList, null, 2)}`
+    );
+
+    const [currentTool, ...followingTools] = toolsList;
+    const eventDetail: ToolEvent = {
+      ...event.detail,
+      core: {
+        ...core,
+        channel,
+      },
+      processingStep: 0,
+      thread_ts,
+      message: text,
+      toolDetails: {
+        previousTools: [],
+        planResults: [],
+        currentTool,
+        followingTools,
+      },
+    };
+
+    await eventBridge.putEvent(
+      "agent.brain",
+      {
+        ...eventDetail,
+      },
+      `tools.${currentTool.function.name}`
+    );
   } catch (error) {
     console.error(error);
-    return;
   }
-  const { text, channel, ts } = slackMessageDetails;
-
-  const systemPrompt = constructSystemPrompt();
-  const tools = [sendMessageDefinition, queryTescoDefinition];
-
-  console.log(`Tools: ${JSON.stringify(tools, null, 2)}`);
-
-  const toolsList = await generateTasksList({
-    systemPrompt,
-    humanPrompt: text,
-    tools,
-  });
-
-  console.log(
-    `Plan to run tools and configurations: ${JSON.stringify(toolsList, null, 2)}`
-  );
-
-  const [currentTool, ...followingTools] = toolsList;
-  const eventDetail: ToolEvent = {
-    ...event.detail,
-    core: {
-      ...core,
-      channel,
-    },
-    processingStep: 0,
-    thread_ts: ts,
-    message: text,
-    toolDetails: {
-      previousTools: [],
-      planResults: [],
-      currentTool,
-      followingTools,
-    },
-  };
-
-  await eventBridge.putEvent(
-    "agent.brain",
-    {
-      ...eventDetail,
-    },
-    `tools.${currentTool.function.name}`
-  );
 };

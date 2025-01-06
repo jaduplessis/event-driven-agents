@@ -109,5 +109,8 @@ export const getThreadMessages = async (
     throw new Error("No messages found");
   }
 
-  return Items;
+  return Items.map((item) => ({
+    ...item,
+    entity: "MessageItem",
+  }));
 };

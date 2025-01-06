@@ -92,5 +92,8 @@ export const getThreadToolUse = async (
     throw new Error("No tools found");
   }
 
-  return Items;
+  return Items.map((item) => ({
+    ...item,
+    entity: "ToolItem",
+  }));
 };

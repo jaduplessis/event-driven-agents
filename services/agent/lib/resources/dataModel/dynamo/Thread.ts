@@ -20,5 +20,3 @@ export const loadThread = async (thread_ts: string): Promise<Thread> => {
 
   return thread;
 };
-
-loadThread("1736173073.522999").then(console.log);
