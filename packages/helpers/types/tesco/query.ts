@@ -9,12 +9,9 @@ const PriceType = z.object({
 
 const NodeType = z.object({
   id: z.string(),
-  baseProductId: z.string(),
   title: z.string(),
   brandName: z.string(),
   defaultImageUrl: z.string(),
-  shelfName: z.string(),
-  isForSale: z.boolean(),
   price: PriceType,
 });
 
@@ -36,5 +33,4 @@ const QueryItem = z.object({
 });
 
 export const TescoQuerySchema = z.array(QueryItem);
-
 export type TescoQueryType = z.infer<typeof TescoQuerySchema>;

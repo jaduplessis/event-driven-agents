@@ -9,6 +9,7 @@ import {
   QueryTesco,
   Replan,
   SendSlackMessage,
+  UpdateBasketTesco,
 } from "./resources/functions";
 
 export class AgentStack extends Stack {
@@ -36,6 +37,11 @@ export class AgentStack extends Stack {
     });
 
     new QueryTesco(this, "queryTesco", {
+      eventBus,
+      agentTable: agentTable.table,
+    });
+
+    new UpdateBasketTesco(this, "updateBasketTesco", {
       eventBus,
       agentTable: agentTable.table,
     });

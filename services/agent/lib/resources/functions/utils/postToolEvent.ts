@@ -1,10 +1,10 @@
 import { EventBridgeAdapter } from "@event-driven-agents/adapters";
 import { EventBridgeEvent } from "aws-lambda";
-import { ToolEvent } from "../../../dataModel";
+import { ToolEvent } from "../../dataModel";
 
 const eventBridge = new EventBridgeAdapter();
 
-export const postEvent = async (
+export const postToolEvent = async (
   event: EventBridgeEvent<`tools.*`, ToolEvent>,
   queryResults: string
 ) => {

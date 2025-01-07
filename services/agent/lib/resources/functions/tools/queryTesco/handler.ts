@@ -5,7 +5,7 @@ import {
   ToolEvent,
   Tools,
 } from "../../../dataModel";
-import { postEvent } from "./eventbus";
+import { postToolEvent } from "../../utils/postToolEvent";
 import { queryTesco } from "./tesco";
 
 export const handler = async (
@@ -25,5 +25,5 @@ export const handler = async (
     results: queryResults,
   });
 
-  await postEvent(event, queryResults);
+  await postToolEvent(event, queryResults);
 };

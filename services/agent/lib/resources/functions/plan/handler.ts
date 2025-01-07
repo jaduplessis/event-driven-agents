@@ -6,6 +6,7 @@ import {
   queryTescoDefinition,
   sendMessageDefinition,
   ToolEvent,
+  updateBasketTescoDefinition,
 } from "../../dataModel";
 import { generateTasksList } from "../utils/generateTasksList";
 import { loadSsmValues } from "../utils/ssm";
@@ -25,7 +26,11 @@ export const handler = async (
     const { text, channel, thread_ts } = await processSlackMessage(event);
 
     const messages = await constructMessages(thread_ts);
-    const tools = [sendMessageDefinition, queryTescoDefinition];
+    const tools = [
+      sendMessageDefinition,
+      queryTescoDefinition,
+      updateBasketTescoDefinition,
+    ];
 
     const toolsList = await generateTasksList({
       messages,
