@@ -16,7 +16,11 @@ This is the event object that is sent to the tool. It is based off of the ToolRe
 extended to contain additional information that the tool may need to know about the event.
 */
 
-export const toolsEnumSchema = z.enum(["sendMessage", "queryTesco"]);
+export const toolsEnumSchema = z.enum([
+  "sendMessage",
+  "queryTesco",
+  "updateBasketTesco",
+]);
 
 export type ToolsEnum = z.infer<typeof toolsEnumSchema>;
 export const Tools = toolsEnumSchema.Values;
