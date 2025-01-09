@@ -1,16 +1,15 @@
-import {
-  getEnvVariable,
-  
-} from "@event-driven-agents/helpers";
+import { getEnvVariable } from "@event-driven-agents/helpers";
 import OpenAI from "openai";
 import { ChatCompletionTool } from "openai/resources";
-import { parseArguments } from "./parseArguments";
 import { ToolsList, toolsListSchema } from "../../dataModel";
+import { parseArguments } from "./parseArguments";
 
 interface InvokeParams {
   systemPrompt: string;
   tools: ChatCompletionTool[];
 }
+
+const MAX_ATTEMPTS = 3;
 
 export const evaluatePlan = async ({
   systemPrompt,
@@ -20,20 +19,31 @@ export const evaluatePlan = async ({
     apiKey: getEnvVariable("OPENAI_API_KEY"),
   });
 
-  console.log("systemPrompt", systemPrompt);
+  let attempts = 0;
+  let response;
 
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o-2024-08-06",
-    messages: [
-      {
-        role: "system",
-        content: systemPrompt,
-      },
-    ],
-    tools,
-  });
+  do {
+    try {
+      response = await openai.chat.completions.create({
+        model: "gpt-4o-2024-08-06",
+        messages: [
+          {
+            role: "system",
+            content: systemPrompt,
+          },
+        ],
+        tools,
+      });
+    } catch (error) {
+      console.error("Error occurred while evaluating plan", error);
+    } finally {
+      attempts++;
+    }
+  } while (attempts < MAX_ATTEMPTS);
 
-  console.log(JSON.stringify(response, null, 2));
+  if (!response) {
+    throw new Error("Failed to evaluate plan");
+  }
 
   const message = response.choices[0].message;
   const finish_reason = response.choices[0].finish_reason;

@@ -12,6 +12,8 @@ interface InvokeParams {
   tools: ChatCompletionTool[];
 }
 
+const MAX_ATTEMPTS = 3;
+
 export const generateTasksList = async ({
   messages,
   tools,
@@ -20,14 +22,28 @@ export const generateTasksList = async ({
     apiKey: getEnvVariable("OPENAI_API_KEY"),
   });
 
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o-2024-08-06",
-    messages,
-    tools,
-  });
+  let attempts = 0;
+  let response;
+
+  do {
+    try {
+      response = await openai.chat.completions.create({
+        model: "gpt-4o-2024-08-06",
+        messages,
+        tools,
+      });
+    } catch (error) {
+      console.error("Error occurred while generating tasks list", error);
+    } finally {
+      attempts++;
+    }
+  } while (attempts < MAX_ATTEMPTS);
+
+  if (!response) {
+    throw new Error("Failed to generate tasks list");
+  }
 
   console.log(JSON.stringify(response, null, 2));
-
   const message = response.choices[0].message;
 
   let data = {};

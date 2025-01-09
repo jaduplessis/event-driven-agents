@@ -1,14 +1,21 @@
-import { Stack } from "aws-cdk-lib";
-import { Construct } from "constructs";
-
-import { DynamoDBConstruct } from "@event-driven-agents/cdk-constructs";
-import { buildResourceName, eventBusName } from "@event-driven-agents/helpers";
+import {
+  DynamoDBConstruct,
+  HttpApiGateway,
+} from "@event-driven-agents/cdk-constructs";
+import {
+  buildResourceName,
+  eventBusName,
+  getStage,
+} from "@event-driven-agents/helpers";
+import { CfnOutput, Stack } from "aws-cdk-lib";
 import { EventBus } from "aws-cdk-lib/aws-events";
+import { Construct } from "constructs";
 import {
   Plan,
   QueryTesco,
   Replan,
   SendSlackMessage,
+  SetTescoToken,
   UpdateBasketTesco,
 } from "./resources/functions";
 
@@ -16,9 +23,19 @@ export class AgentStack extends Stack {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
+    const stage = getStage();
+
     const agentTable = new DynamoDBConstruct(this, "agentTable", {
       tableName: buildResourceName("agent-table"),
     });
+
+    const apiGateway = new HttpApiGateway(
+      this,
+      buildResourceName("api-gateway-v2"),
+      {
+        stage,
+      }
+    );
 
     const eventBus = EventBus.fromEventBusName(
       this,
@@ -48,6 +65,15 @@ export class AgentStack extends Stack {
 
     new SendSlackMessage(this, "sendSlackMessage", {
       eventBus,
+    });
+
+    new SetTescoToken(this, "setTescoToken", {
+      apiGateway,
+    });
+
+    new CfnOutput(this, "apiGatewayUrl", {
+      description: "API Gateway URL",
+      value: apiGateway.httpApi.url ?? "",
     });
   }
 }

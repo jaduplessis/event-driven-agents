@@ -5,7 +5,8 @@ import axios from "axios";
 
 export const updateBasket = async (
   id: string,
-  quantity: number
+  quantity: number,
+  bearerToken: string
 ): Promise<string> => {
   const config = {
     method: "post",
@@ -22,7 +23,7 @@ export const updateBasket = async (
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
       accept: "application/json",
       "accept-language": "en-GB",
-      authorization: getEnvVariable("TESCO_BEARER_TOKEN"),
+      authorization: bearerToken,
       "content-type": "application/json",
       "customer-uuid": "cfdf364d-23c9-41fc-9308-ad7e337b4824",
       language: "en-GB",

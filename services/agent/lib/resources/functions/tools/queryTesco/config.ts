@@ -47,7 +47,7 @@ export class QueryTesco extends Construct {
     new Rule(this, buildResourceName("on-query-tesco-event"), {
       eventBus,
       eventPattern: {
-        source: ["agent.brain"],
+        source: ["agent.brain", "tools"],
         detailType: [
           `tools.${Tools.queryTesco}`,
           `tools.functions.${Tools.queryTesco}`,
