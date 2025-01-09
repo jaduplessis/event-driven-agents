@@ -69,11 +69,16 @@ export const updateBasketItem = async (
   return Attributes;
 };
 
-export const listAllBasketItems = async (
-  basketDate: string
-): Promise<BasketItemTypeInput[]> => {
+export const listAllBasketItems = async ({
+  basketDate,
+  user,
+}: {
+  basketDate: string;
+  user?: string;
+}): Promise<BasketItemTypeInput[]> => {
   const query = {
     partition: `BASKET#${basketDate}`,
+    sort: user ? `USER#${user}#PRODUCT#` : undefined,
   };
 
   const { Items } = await AgentTable.build(QueryCommand)

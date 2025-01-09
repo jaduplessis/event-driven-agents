@@ -13,7 +13,6 @@ export const messageSchema = schema({
   thread_ts: string().key(),
   message_ts: string().key().default("ROOT"),
   user: string(),
-  teamId: string(),
   channel: string(),
   text: string(),
 });

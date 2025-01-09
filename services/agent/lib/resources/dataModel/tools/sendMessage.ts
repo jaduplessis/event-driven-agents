@@ -6,6 +6,7 @@ export const sendMessageDefinition: ChatCompletionTool = {
   type: "function",
   function: {
     name: "sendMessage",
+    description: "Send a message to the user",
     parameters: {
       type: "object",
       properties: {

@@ -17,7 +17,7 @@ interface FunctionProps {
   agentTable: Table;
 }
 
-export class UpdateBasketDynamo extends Construct {
+export class ListBasket extends Construct {
   public function: NodejsFunction;
 
   constructor(
@@ -29,7 +29,7 @@ export class UpdateBasketDynamo extends Construct {
 
     this.function = new SlackCustomResource(
       this,
-      buildResourceName("update-basket-dynamo"),
+      buildResourceName("list-basket"),
       {
         lambdaEntry: getCdkHandlerPath(__dirname),
         timeout: Duration.seconds(30),
@@ -42,13 +42,13 @@ export class UpdateBasketDynamo extends Construct {
     eventBus.grantPutEventsTo(this.function);
     agentTable.grantReadWriteData(this.function);
 
-    new Rule(this, buildResourceName("on-update-basket-dynamo-event"), {
+    new Rule(this, buildResourceName("on-list-basket-event"), {
       eventBus,
       eventPattern: {
         source: ["agent.brain", "tools"],
         detailType: [
-          `tools.${Tools.updateBasketDynamo}`,
-          `tools.functions.${Tools.updateBasketDynamo}`,
+          `tools.${Tools.listBasket}`,
+          `tools.functions.${Tools.listBasket}`,
         ],
       },
       targets: [new LambdaFunction(this.function)],

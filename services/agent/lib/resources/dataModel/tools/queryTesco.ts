@@ -6,6 +6,7 @@ export const queryTescoDefinition: ChatCompletionTool = {
   type: "function",
   function: {
     name: "queryTesco",
+    description: "Search for an item or category through the Tesco API",
     parameters: {
       type: "object",
       properties: {

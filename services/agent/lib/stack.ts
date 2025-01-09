@@ -11,6 +11,7 @@ import { CfnOutput, Stack } from "aws-cdk-lib";
 import { EventBus } from "aws-cdk-lib/aws-events";
 import { Construct } from "constructs";
 import {
+  ListBasket,
   Plan,
   QueryTesco,
   Replan,
@@ -65,6 +66,11 @@ export class AgentStack extends Stack {
     });
 
     new UpdateBasketDynamo(this, "updateBasketDynamo", {
+      eventBus,
+      agentTable: agentTable.table,
+    });
+
+    new ListBasket(this, "listBasket", {
       eventBus,
       agentTable: agentTable.table,
     });

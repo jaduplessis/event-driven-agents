@@ -4,10 +4,10 @@ import { getRegion } from "@event-driven-agents/helpers";
 import { EventBridgeEvent } from "aws-lambda";
 import {
   ToolEvent,
+  listBasketDefinition,
   queryTescoDefinition,
   sendMessageDefinition,
   updateBasketDynamoDefinition,
-  updateBasketTescoDefinition,
 } from "../../dataModel";
 import { evaluatePlan } from "../utils/evaluatePlan";
 import { loadSsmValues } from "../utils/ssm";
@@ -35,6 +35,7 @@ export const handler = async (
     sendMessageDefinition,
     queryTescoDefinition,
     updateBasketDynamoDefinition,
+    listBasketDefinition,
   ];
 
   console.log(`Tools: ${JSON.stringify(tools, null, 2)}`);

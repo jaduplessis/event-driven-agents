@@ -3,11 +3,11 @@ import { EventBridgeAdapter } from "@event-driven-agents/adapters";
 import { getRegion, MessageEvent } from "@event-driven-agents/helpers";
 import { EventBridgeEvent } from "aws-lambda";
 import {
+  listBasketDefinition,
   queryTescoDefinition,
   sendMessageDefinition,
   ToolEvent,
   updateBasketDynamoDefinition,
-  updateBasketTescoDefinition,
 } from "../../dataModel";
 import { generateTasksList } from "../utils/generateTasksList";
 import { loadSsmValues } from "../utils/ssm";
@@ -31,6 +31,7 @@ export const handler = async (
       sendMessageDefinition,
       queryTescoDefinition,
       updateBasketDynamoDefinition,
+      listBasketDefinition,
     ];
 
     const toolsList = await generateTasksList({
