@@ -5,7 +5,6 @@ import {
   buildParameterArnSsm,
   buildResourceName,
   getCdkHandlerPath,
-  getEnvVariable,
   getRegion,
 } from "@event-driven-agents/helpers";
 import { Duration, Stack } from "aws-cdk-lib";
@@ -21,7 +20,7 @@ interface FunctionProps {
   agentTable: Table;
 }
 
-export class UpdateBasketTesco extends Construct {
+export class UpdateBasketDynamo extends Construct {
   public function: NodejsFunction;
 
   constructor(
@@ -36,13 +35,12 @@ export class UpdateBasketTesco extends Construct {
 
     this.function = new SlackCustomResource(
       this,
-      buildResourceName("update-basket-tesco"),
+      buildResourceName("update-basket-dynamo"),
       {
         lambdaEntry: getCdkHandlerPath(__dirname),
         timeout: Duration.seconds(30),
         environment: {
           EVENT_BUS: eventBus.eventBusName,
-          TESCO_API_KEY: getEnvVariable("TESCO_API_KEY"),
         },
       }
     );
@@ -50,19 +48,19 @@ export class UpdateBasketTesco extends Construct {
     eventBus.grantPutEventsTo(this.function);
     agentTable.grantReadWriteData(this.function);
 
-    new Rule(this, buildResourceName("on-update-basket-tesco-event"), {
+    new Rule(this, buildResourceName("on-update-basket-dynamo-event"), {
       eventBus,
       eventPattern: {
         source: ["agent.brain", "tools"],
         detailType: [
-          `tools.${Tools.updateBasketTesco}`,
-          `tools.functions.${Tools.updateBasketTesco}`,
+          `tools.${Tools.updateBasketDynamo}`,
+          `tools.functions.${Tools.updateBasketDynamo}`,
         ],
       },
       targets: [new LambdaFunction(this.function)],
     });
 
-    const accessPattern = buildResourceName("tesco-bearer-token");
+    const accessPattern = buildResourceName("dynamo-bearer-token");
     const ssmReadPolicy = new PolicyStatement({
       actions: ["ssm:GetParameter"],
       resources: [buildParameterArnSsm(accessPattern, region, accountId)],

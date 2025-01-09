@@ -6,6 +6,7 @@ import {
   queryTescoDefinition,
   sendMessageDefinition,
   ToolEvent,
+  updateBasketDynamoDefinition,
   updateBasketTescoDefinition,
 } from "../../dataModel";
 import { generateTasksList } from "../utils/generateTasksList";
@@ -29,7 +30,7 @@ export const handler = async (
     const tools = [
       sendMessageDefinition,
       queryTescoDefinition,
-      updateBasketTescoDefinition,
+      updateBasketDynamoDefinition,
     ];
 
     const toolsList = await generateTasksList({

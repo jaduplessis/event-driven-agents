@@ -6,6 +6,7 @@ import {
   ToolEvent,
   queryTescoDefinition,
   sendMessageDefinition,
+  updateBasketDynamoDefinition,
   updateBasketTescoDefinition,
 } from "../../dataModel";
 import { evaluatePlan } from "../utils/evaluatePlan";
@@ -33,7 +34,7 @@ export const handler = async (
   const tools = [
     sendMessageDefinition,
     queryTescoDefinition,
-    updateBasketTescoDefinition,
+    updateBasketDynamoDefinition,
   ];
 
   console.log(`Tools: ${JSON.stringify(tools, null, 2)}`);
