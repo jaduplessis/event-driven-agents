@@ -11,7 +11,7 @@ import {
   Tools,
   updateBasketTescoSchema,
 } from "../../../dataModel";
-import { postToolEvent } from "../../utils/postToolEvent";
+import { postToolEvent } from "../../utils";
 import { updateBasket } from "./tesco";
 
 const ssm = new SSMClient({ region: getRegion() });

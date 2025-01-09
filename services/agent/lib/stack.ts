@@ -16,6 +16,7 @@ import {
   Replan,
   SendSlackMessage,
   SetTescoToken,
+  UpdateBasketDynamo,
   UpdateBasketTesco,
 } from "./resources/functions";
 
@@ -59,6 +60,11 @@ export class AgentStack extends Stack {
     });
 
     new UpdateBasketTesco(this, "updateBasketTesco", {
+      eventBus,
+      agentTable: agentTable.table,
+    });
+
+    new UpdateBasketDynamo(this, "updateBasketDynamo", {
       eventBus,
       agentTable: agentTable.table,
     });

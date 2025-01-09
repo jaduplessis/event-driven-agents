@@ -19,6 +19,7 @@ extended to contain additional information that the tool may need to know about 
 export const toolsEnumSchema = z.enum([
   "sendMessage",
   "queryTesco",
+  "updateBasketDynamo",
   "updateBasketTesco",
 ]);
 

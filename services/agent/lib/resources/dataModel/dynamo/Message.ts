@@ -12,6 +12,7 @@ import { AgentTable } from "./Table";
 export const messageSchema = schema({
   thread_ts: string().key(),
   message_ts: string().key().default("ROOT"),
+  user: string(),
   teamId: string(),
   channel: string(),
   text: string(),
@@ -66,6 +67,7 @@ interface CreateMessageProps {
   messageKeys: RawMessageKeys;
   message: {
     teamId: string;
+    user: string;
     channel: string;
     text: string;
   };
