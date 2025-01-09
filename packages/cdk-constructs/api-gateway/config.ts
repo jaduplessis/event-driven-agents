@@ -1,9 +1,10 @@
 import { buildResourceName } from "@event-driven-agents/helpers";
 import {
-    ApiKeySourceType,
-    Resource,
-    RestApi,
+  ApiKeySourceType,
+  Resource,
+  RestApi,
 } from "aws-cdk-lib/aws-apigateway";
+import { CorsHttpMethod, HttpApi } from "aws-cdk-lib/aws-apigatewayv2";
 import { StringParameter } from "aws-cdk-lib/aws-ssm";
 import { Construct } from "constructs";
 
@@ -40,6 +41,32 @@ export class ApiGateway extends Construct {
     new StringParameter(this, "api-gateway-url", {
       parameterName: `/${parameterName}`,
       stringValue: this.restApi.url,
+    });
+  }
+}
+
+export class HttpApiGateway extends Construct {
+  public httpApi: HttpApi;
+
+  constructor(scope: Construct, id: string, props: ApiGatewayProps) {
+    super(scope, id);
+
+    const { stage } = props;
+
+    this.httpApi = new HttpApi(this, "api-gateway-v2", {
+      apiName: buildResourceName(`${stage}-api-gateway-v2`),
+      createDefaultStage: true,
+      corsPreflight: {
+        allowOrigins: ["*"],
+        allowMethods: [CorsHttpMethod.ANY],
+        allowHeaders: ["*"],
+      },
+    });
+
+    // Create SSM parameter for the API Gateway URL
+    new StringParameter(this, "api-gateway-v2-url", {
+      parameterName: `/system/${buildResourceName("api-gateway-v2-url")}`,
+      stringValue: this.httpApi.url ?? "",
     });
   }
 }

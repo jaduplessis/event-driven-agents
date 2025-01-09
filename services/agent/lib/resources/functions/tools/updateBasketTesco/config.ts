@@ -2,14 +2,17 @@ import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 
 import { SlackCustomResource } from "@event-driven-agents/cdk-constructs";
 import {
+  buildParameterArnSsm,
   buildResourceName,
   getCdkHandlerPath,
   getEnvVariable,
+  getRegion,
 } from "@event-driven-agents/helpers";
-import { Duration } from "aws-cdk-lib";
+import { Duration, Stack } from "aws-cdk-lib";
 import { Table } from "aws-cdk-lib/aws-dynamodb";
 import { IEventBus, Rule } from "aws-cdk-lib/aws-events";
 import { LambdaFunction } from "aws-cdk-lib/aws-events-targets";
+import { PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 import { Tools } from "../../../dataModel";
 
@@ -28,6 +31,9 @@ export class UpdateBasketTesco extends Construct {
   ) {
     super(scope, id);
 
+    const region = getRegion();
+    const accountId = Stack.of(this).account;
+
     this.function = new SlackCustomResource(
       this,
       buildResourceName("update-basket-tesco"),
@@ -37,7 +43,6 @@ export class UpdateBasketTesco extends Construct {
         environment: {
           EVENT_BUS: eventBus.eventBusName,
           TESCO_API_KEY: getEnvVariable("TESCO_API_KEY"),
-          TESCO_BEARER_TOKEN: getEnvVariable("TESCO_BEARER_TOKEN"),
         },
       }
     );
@@ -56,5 +61,13 @@ export class UpdateBasketTesco extends Construct {
       },
       targets: [new LambdaFunction(this.function)],
     });
+
+    const accessPattern = buildResourceName("tesco-bearer-token");
+    const ssmReadPolicy = new PolicyStatement({
+      actions: ["ssm:GetParameter"],
+      resources: [buildParameterArnSsm(accessPattern, region, accountId)],
+    });
+
+    this.function.addToRolePolicy(ssmReadPolicy);
   }
 }

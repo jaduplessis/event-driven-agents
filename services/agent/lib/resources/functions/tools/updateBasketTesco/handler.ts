@@ -1,3 +1,9 @@
+import { SSMClient } from "@aws-sdk/client-ssm";
+import {
+  buildResourceName,
+  getParameter,
+  getRegion,
+} from "@event-driven-agents/helpers";
 import { EventBridgeEvent } from "aws-lambda";
 import {
   createToolUse,
@@ -7,6 +13,8 @@ import {
 } from "../../../dataModel";
 import { postToolEvent } from "../../utils/postToolEvent";
 import { updateBasket } from "./tesco";
+
+const ssm = new SSMClient({ region: getRegion() });
 
 export const handler = async (
   event: EventBridgeEvent<`tools.*`, ToolEvent>
@@ -18,9 +26,18 @@ export const handler = async (
     currentTool.function.arguments
   );
 
+  const bearerToken = await getParameter(
+    ssm,
+    buildResourceName("tesco-bearer-token"),
+    true
+  );
+  if (!bearerToken) {
+    throw new Error("Bearer token not found");
+  }
+
   let updateBasketResults;
   try {
-    updateBasketResults = await updateBasket(id, quantity);
+    updateBasketResults = await updateBasket(id, quantity, bearerToken);
   } catch (error) {
     updateBasketResults = error as string;
   }
