@@ -30,12 +30,16 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   }
 
   const bearerToken = authorization.value;
-
-  console.log("Bearer token:", bearerToken);
-
   const parameterName = buildResourceName(`tesco-bearer-token`);
 
-  await uploadParameter(SSM, parameterName, bearerToken, true);
+  try {
+    await uploadParameter(SSM, parameterName, bearerToken, true);
+  } catch (error) {
+    return {
+      statusCode: 204,
+      body: JSON.stringify({ message: "Bearer token not set" }),
+    };
+  }
 
   return {
     statusCode: 200,
